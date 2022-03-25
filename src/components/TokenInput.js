@@ -4,7 +4,7 @@ const TokenInput = () => {
     return (
         <Container>
             <Amount />
-            <MaxButton></MaxButton>
+            <MaxButton>Max</MaxButton>
         </Container>
     );
 };
