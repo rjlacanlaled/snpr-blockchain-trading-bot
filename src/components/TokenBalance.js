@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-const TokenBalance = ({ userAddress = 'none' }) => {
-    const [token, setToken] = useState('');
-    const [address, setAddress] = useState(userAddress);
+const TokenBalance = ({ token, balance, onTokenClick }) => {
+    const handleTokenClick = () => {
+        onTokenClick();
+    };
 
     return (
         <Container>
-            <Token>Token Name</Token>
-            <Balance>Token Balance</Balance>
+            <Token onClick={handleTokenClick}>{token}</Token>
+            <Balance>{balance}</Balance>
         </Container>
     );
 };

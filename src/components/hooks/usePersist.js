@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const fetchSavedValue = (key, value) => {
+    if (!value) return;
     const savedValue = JSON.parse(localStorage.getItem(key));
     if (savedValue) return savedValue;
 
@@ -12,7 +13,7 @@ const usePersist = (key, initialValue) => {
 
     useEffect(() => {
         localStorage.setItem(key, JSON.stringify(value));
-    }, [value]);
+    }, [key, value]);
 
     return [value, setValue];
 }
