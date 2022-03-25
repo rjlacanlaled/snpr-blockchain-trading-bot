@@ -4,7 +4,7 @@ import TokenBalance from '../components/TokenBalance';
 const Trade = () => {
     return (
         <Container>
-            <TokenBalance></TokenBalance>
+            <TokenBalance />
         </Container>
     );
 }
