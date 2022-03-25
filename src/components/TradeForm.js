@@ -9,7 +9,7 @@ import TokenBalance from './TokenBalance';
 import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
 
-const TradeForm = () => {
+const TradeForm = ({ onChangeToken }) => {
     const network = useBlockchainNetwork();
     const [fromToken, setFromToken] = usePersist('fromTokenAdrress', '');
     const [toToken, setToToken] = usePersist('toTokenAdrress', '');
