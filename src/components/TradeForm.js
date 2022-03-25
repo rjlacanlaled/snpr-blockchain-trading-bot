@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import SwapSlippage from './SwapSlippage';
 import TokenBalance from './TokenBalance';
@@ -5,6 +6,9 @@ import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
 
 const TradeForm = () => {
+    const [fromToken, setFromToken] = useState('');
+    const [toToken, setToToken] = useState('');
+
     return (
         <Container>
             <Form>
@@ -14,7 +18,7 @@ const TradeForm = () => {
                 <TokenBalance />
                 <TokenInput />
                 <SwapButton>Swap</SwapButton>
-                <TradeDetails />
+                <TradeDetails from={fromToken} to={toToken} />
             </Form>
         </Container>
     );

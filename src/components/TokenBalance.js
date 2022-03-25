@@ -13,7 +13,10 @@ const TokenBalance = ({ userAddress = 'none' }) => {
     );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
 const Token = styled.button``;
 const Balance = styled.p``;
 
