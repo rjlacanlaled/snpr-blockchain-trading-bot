@@ -8,11 +8,7 @@ const BlockchainNetworkProvider = ({ children }) => {
         getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
     });
 
-    return (
-        <BlockchainNetworkContext.Provider value={{ network, setNetwork }}>
-            {children}
-        </BlockchainNetworkContext.Provider>
-    );
+    return <BlockchainNetworkContext.Provider value={network}>{children}</BlockchainNetworkContext.Provider>;
 };
 
 export default BlockchainNetworkProvider;
