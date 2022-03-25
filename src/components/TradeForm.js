@@ -15,16 +15,28 @@ const TradeForm = () => {
     const [toToken, setToToken] = usePersist('toTokenAdrress', '');
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
     const [toDetails, setToDetails] = useTokenDetails(network, toToken);
+    const [search, setSearch] = useState('');
+    const [isBuying, setIsBuying] = usePersist(true);
 
     useEffect(() => {
         setFromDetails(network, fromToken);
         setToDetails(network, toToken);
     }, [fromToken, toToken]);
 
+    const handleSearchChange = e => {
+        setSearch(e.target.value);
+
+        isBuying ? setToToken(search) : setFromToken(search);
+    };
+
+    const handleSubmit = e => {
+        e.preventDefault();
+    };
 
     return (
         <Container>
-            <Form>
+            <Form onSubmit={handleSubmit}>
+                <SearchInput onChange={handleSearchChange} value={search} placeholder='Enter token address' />
                 <SwapSlippage />
                 <TokenBalance token={(fromDetails && fromDetails.name) || 'Token'} balance={false || 0} />
                 <TokenInput />
@@ -33,7 +45,6 @@ const TradeForm = () => {
                 <SwapButton>Swap</SwapButton>
                 <TradeDetails from={fromToken} to={toToken} />
             </Form>
-
         </Container>
     );
 };
@@ -48,5 +59,6 @@ const Form = styled.form`
     padding: 10px;
 `;
 const SwapButton = styled.button``;
+const SearchInput = styled.input``;
 
 export default TradeForm;
