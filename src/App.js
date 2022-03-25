@@ -1,10 +1,12 @@
 import styled from 'styled-components';
-import Trade from './pages/Trade';
+import TradeForm from './components/TradeForm';
 
 export default function App() {
     return (
-        <>
-            <Trade />
-        </>
+        <Container>
+            <TradeForm />
+        </Container>
     );
 }
+
+const Container = styled.div``;

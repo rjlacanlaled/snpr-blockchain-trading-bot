@@ -7,8 +7,8 @@ const TokenBalance = ({ userAddress = 'none' }) => {
 
     return (
         <Container>
-            <Token>{token}</Token>
-            <Balance>{address}</Balance>
+            <Token>Token Name</Token>
+            <Balance>Token Balance</Balance>
         </Container>
     );
 };

@@ -1,7 +1,13 @@
 import styled from 'styled-components';
+import TokenBalance from './TokenBalance';
 
 const TradeForm = () => {
-    return <Form></Form>;
+    return (
+        <Form>
+            <TokenBalance />
+            <TokenInput />
+        </Form>
+    );
 };
 
 const Form = styled.form``;
