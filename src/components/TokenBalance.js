@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-const TokenBalance = ({ token, balance, onTokenClick }) => {
-    const handleTokenClick = () => {
-        onTokenClick();
-    };
-
+const TokenBalance = ({ token, balance, tokenSymbol }) => {
     return (
         <Container>
-            <Token onClick={handleTokenClick}>{token}</Token>
-            <Balance>{balance}</Balance>
+            <Token>{token}</Token>
+            <Balance>{balance} {tokenSymbol}</Balance>
         </Container>
     );
 };
@@ -18,7 +14,7 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
 `;
-const Token = styled.button``;
+const Token = styled.p``;
 const Balance = styled.p``;
 
 export default TokenBalance;

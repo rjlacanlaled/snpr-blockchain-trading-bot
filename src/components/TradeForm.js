@@ -9,7 +9,7 @@ import TokenBalance from './TokenBalance';
 import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
 
-const TradeForm = ({ onChangeToken }) => {
+const TradeForm = () => {
     const network = useBlockchainNetwork();
     const [fromToken, setFromToken] = usePersist('fromTokenAdrress', '');
     const [toToken, setToToken] = usePersist('toTokenAdrress', '');
@@ -21,17 +21,19 @@ const TradeForm = ({ onChangeToken }) => {
         setToDetails(network, toToken);
     }, [fromToken, toToken]);
 
+
     return (
         <Container>
             <Form>
                 <SwapSlippage />
-                <TokenBalance />
+                <TokenBalance token={(fromDetails && fromDetails.name) || 'Token'} balance={false || 0} />
                 <TokenInput />
-                <TokenBalance />
+                <TokenBalance token={(toDetails && toDetails.name) || 'Token'} balance={false || 0} />
                 <TokenInput />
                 <SwapButton>Swap</SwapButton>
                 <TradeDetails from={fromToken} to={toToken} />
             </Form>
+
         </Container>
     );
 };

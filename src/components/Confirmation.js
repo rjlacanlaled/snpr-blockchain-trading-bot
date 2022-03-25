@@ -1,7 +1,6 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { NegativeButton, PrimaryButton } from './styles/Buttons.styled';
 
 export default function Confirmation({ message, onConfirm }) {
     return (
@@ -18,3 +17,4 @@ export default function Confirmation({ message, onConfirm }) {
 const Container = styled.div``;
 const Message = styled.p``;
 const Button = styled.button``;
+const ButtonGroup = styled.div``;
