@@ -25,7 +25,7 @@ const Token = styled.p`
     font-size: 0.8rem;
 `;
 const Balance = styled.p`
-    font-weight: 900;
+    font-weight: 400;
     font-size: 0.7rem;
 `;
 
