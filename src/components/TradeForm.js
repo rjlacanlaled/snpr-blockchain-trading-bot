@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import useBlockchainNetwork from './hooks/useBlockchainNetwork';
 import usePersist from './hooks/usePersist';
 import useTokenDetails from './hooks/useTokenDetails';
+import Settings from './Settings';
+import { Modal } from './styles/Modal.styled';
 import SwapSlippage from './SwapSlippage';
 import TokenBalance from './TokenBalance';
 import TokenInput from './TokenInput';
@@ -22,6 +24,8 @@ const TradeForm = ({
     const [toBalance, setToBalance] = useState(0);
     const [search, setSearch] = useState('');
     const [isBuying, setIsBuying] = useState(true);
+
+    const [showSettings, setShowSettings] = useState(false);
 
     useEffect(() => {
         setFromDetails(network, fromToken);
@@ -57,8 +61,17 @@ const TradeForm = ({
         setToDetails(fromDetails);
     };
 
+    const handleSettings = () => {
+        setShowSettings(true);
+    };
+
+    const handleSettingsConfirm = confirm => {
+        setShowSettings(false);
+    }
+
     return (
         <Container>
+            <SettingsButton onClick={handleSettings}>Settings</SettingsButton>
             <Form onSubmit={handleSubmit}>
                 <SearchInput
                     onPaste={handleSearchChange}
@@ -75,7 +88,7 @@ const TradeForm = ({
                 <TokenInput />
                 <SwitchButton onClick={handleSwitch}>Switch</SwitchButton>
                 <TokenBalance
-                    token={toDetails && toDetails[0] && toDetails[1].name }
+                    token={toDetails && toDetails[0] && toDetails[1].name}
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
@@ -87,6 +100,10 @@ const TradeForm = ({
                     price={toDetails && toDetails[0] && toDetails[1].price}
                 />
             </Form>
+
+            <Modal show={showSettings}>
+                <Settings onConfirm={handleSettingsConfirm}/>
+            </Modal>
         </Container>
     );
 };
@@ -94,6 +111,8 @@ const TradeForm = ({
 const Container = styled.div`
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 `;
 const Form = styled.form`
     border: 1px solid black;
@@ -102,6 +121,7 @@ const Form = styled.form`
 `;
 const SwapButton = styled.button``;
 const SwitchButton = styled.button``;
+const SettingsButton = styled.button``;
 const SearchInput = styled.input``;
 
 export default TradeForm;
