@@ -10,7 +10,7 @@ const BlockchainNetworkProvider = ({ children }) => {
     const [eth, setEth] = useState(window.ethereum);
     const [account, setAccount] = useState();
     const [balance, setBalance] = useState(0);
-
+    const [connected, setConnected] = useState(false);
 
     const [network, setNetwork] = useState({
         blockchain: 'binance',
@@ -38,6 +38,7 @@ const BlockchainNetworkProvider = ({ children }) => {
             await eth.request({ method: 'eth_accounts' });
             setAccount(eth.selectedAddress);
             setBalance(await getFormattedBalance());
+            setConnected(true);
         } catch (err) {
             alert(err);
         }
@@ -46,18 +47,19 @@ const BlockchainNetworkProvider = ({ children }) => {
     const disconnect = () => {
         setAccount();
         setBalance(0);
+        setConnected(false);
     };
 
     const getFormattedBalance = async () => {
-        return parseFloat(network.web3.utils.fromWei(await getBalance(), "ether")).toFixed(4);
-    }
+        return parseFloat(network.web3.utils.fromWei(await getBalance(), 'ether')).toFixed(4);
+    };
 
     const getBalance = async () => {
-        return await eth.request({ method: 'eth_getBalance', params: [eth.selectedAddress]});
-    }
+        return await eth.request({ method: 'eth_getBalance', params: [eth.selectedAddress] });
+    };
 
     return (
-        <BlockchainNetworkContext.Provider value={{ network, eth, account, connect, disconnect, balance }}>
+        <BlockchainNetworkContext.Provider value={{ network, eth, account, connect, disconnect, balance, connected }}>
             {children}
         </BlockchainNetworkContext.Provider>
     );

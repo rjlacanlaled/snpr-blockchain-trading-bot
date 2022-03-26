@@ -3,18 +3,10 @@ import styled from 'styled-components';
 import useBlockchainNetwork from './hooks/useBlockchainNetwork';
 
 const Header = () => {
-    const { connect, disconnect, account, balance } = useBlockchainNetwork();
-
-    const [connected, setConnected] = useState(false);
+    const { connect, disconnect, account, balance, connected } = useBlockchainNetwork();
 
     const handleConnectWallet = async () => {
-        if (account) {
-            disconnect();
-            setConnected(false);
-        } else {
-            connect();
-            setConnected(true);
-        }
+        account ? disconnect() : connect();
     };
 
     return (
