@@ -35,7 +35,7 @@ const BlockchainNetworkProvider = ({ children }) => {
         if (!eth) return;
 
         try {
-            await eth.request({ method: 'eth_accounts' });
+            await eth.request({ method: 'eth_requestAccounts' });
             setAccount(eth.selectedAddress);
             setBalance(await getFormattedBalance());
             setConnected(true);
