@@ -40,7 +40,7 @@ const BlockchainNetworkProvider = ({ children }) => {
             setBalance(await getFormattedBalance());
             setConnected(true);
         } catch (err) {
-            alert(err);
+            console.log(err);
         }
     };
 
