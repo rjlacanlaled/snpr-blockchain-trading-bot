@@ -15,7 +15,7 @@ const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     defaultToToken = '0x129385c4acd0075e45a0c9a5177bdfec9678a138',
 }) => {
-    const { network } = useBlockchainNetwork();
+    const { network, connected } = useBlockchainNetwork();
     const [fromToken, setFromToken] = useState(defaultFromToken);
     const [toToken, setToToken] = useState(defaultToToken);
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
@@ -93,7 +93,7 @@ const TradeForm = ({
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
                 <TokenInput />
-                <SwapButton>Swap</SwapButton>
+                <SwapButton disabled={!connected}>{connected ? 'Swap' : 'Not Connected'}</SwapButton>
                 <TradeDetails
                     fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                     toSymbol={toDetails && toDetails[0] && toDetails[1].symbol}

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import BlockchainNetworkProvider from './components/contexts/BlockchainNetworkContext';
+import UniswapContextProvider from './components/contexts/UniswapContext';
 import Header from './components/Header';
 import Global from './components/styles/Global';
 import Trade from './pages/Trade';
@@ -7,11 +8,13 @@ import Trade from './pages/Trade';
 export default function App() {
     return (
         <BlockchainNetworkProvider>
-            <Global />
-            <Header />
-            <Container>
-                <Trade />
-            </Container>
+            <UniswapContextProvider>
+                <Global />
+                <Header />
+                <Container>
+                    <Trade />
+                </Container>
+            </UniswapContextProvider>
         </BlockchainNetworkProvider>
     );
 }
