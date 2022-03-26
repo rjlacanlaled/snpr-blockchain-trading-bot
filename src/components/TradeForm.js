@@ -15,7 +15,7 @@ const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     defaultToToken = '0x129385c4acd0075e45a0c9a5177bdfec9678a138',
 }) => {
-    const network = useBlockchainNetwork();
+    const { network } = useBlockchainNetwork();
     const [fromToken, setFromToken] = useState(defaultFromToken);
     const [toToken, setToToken] = useState(defaultToToken);
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
@@ -67,7 +67,7 @@ const TradeForm = ({
 
     const handleSettingsConfirm = confirm => {
         setShowSettings(false);
-    }
+    };
 
     return (
         <Container>
@@ -102,7 +102,7 @@ const TradeForm = ({
             </Form>
 
             <Modal show={showSettings}>
-                <Settings onConfirm={handleSettingsConfirm}/>
+                <Settings onConfirm={handleSettingsConfirm} />
             </Modal>
         </Container>
     );
