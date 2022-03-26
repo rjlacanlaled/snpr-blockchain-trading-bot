@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
-const TokenInput = () => {
+const TokenInput = ({ onInputChange, value, maxAmount }) => {
     return (
         <Container>
-            <Amount />
-            <MaxButton>Max</MaxButton>
+            <Amount onChange={e => onInputChange(e.target.value)} value={value} />
+            <MaxButton onClick={e => onInputChange(maxAmount)}>Max</MaxButton>
         </Container>
     );
 };

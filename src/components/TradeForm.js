@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import useBlockchainNetwork from './hooks/useBlockchainNetwork';
 import usePersist from './hooks/usePersist';
 import useTokenDetails from './hooks/useTokenDetails';
+import useUniswap from './hooks/useUniswap';
 import Settings from './Settings';
 import { Modal } from './styles/Modal.styled';
 import SwapSlippage from './SwapSlippage';
@@ -15,7 +16,8 @@ const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     defaultToToken = '0x129385c4acd0075e45a0c9a5177bdfec9678a138',
 }) => {
-    const { network, connected } = useBlockchainNetwork();
+    const { network, connected, getTokenBalance, getFormattedTokenBalance } = useBlockchainNetwork();
+    const { router, swapExactTokensForTokens } = useUniswap();
     const [fromToken, setFromToken] = useState(defaultFromToken);
     const [toToken, setToToken] = useState(defaultToToken);
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
@@ -24,16 +26,25 @@ const TradeForm = ({
     const [toBalance, setToBalance] = useState(0);
     const [search, setSearch] = useState('');
     const [isBuying, setIsBuying] = useState(true);
+    const [fromAmount, setFromAmount] = useState(0);
+    const [toAmount, setToAmount] = useState(0);
 
     const [showSettings, setShowSettings] = useState(false);
 
-    useEffect(() => {
+    useEffect(async () => {
         setFromDetails(network, fromToken);
+        setFromBalance(await getFormattedTokenBalance(fromToken));
     }, [fromToken]);
 
-    useEffect(() => {
+    useEffect(async () => {
         setToDetails(network, toToken);
+        setToBalance(await getFormattedTokenBalance(toToken));
     }, [toToken]);
+
+    useEffect(async () => {
+        setFromBalance(await getFormattedTokenBalance(fromToken));
+        setToBalance(await getFormattedTokenBalance(toToken));
+    }, [connected]);
 
     useEffect(() => {
         if (isBuying) {
@@ -45,20 +56,25 @@ const TradeForm = ({
         }
     }, [search]);
 
-    useEffect(() => {}, [fromDetails, toDetails]);
+    useEffect(() => {
+        setFromToken(toToken);
+        setToToken(fromToken);
+    }, [isBuying]);
 
     const handleSearchChange = e => {
         setSearch(e.target.value);
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
+        console.log(fromAmount);
+        console.log(fromDetails);
+        console.log(toAmount);
+        console.log(toDetails);
     };
 
     const handleSwitch = () => {
         setIsBuying(!isBuying);
-        setFromDetails(toDetails);
-        setToDetails(fromDetails);
     };
 
     const handleSettings = () => {
@@ -67,6 +83,14 @@ const TradeForm = ({
 
     const handleSettingsConfirm = confirm => {
         setShowSettings(false);
+    };
+
+    const handleFromAmountChange = e => {
+        setFromAmount(e.target.value);
+    };
+
+    const handleToAmountChange = e => {
+        setToAmount(e.target.value);
     };
 
     return (
@@ -79,20 +103,20 @@ const TradeForm = ({
                     value={search}
                     placeholder='Enter token address'
                 />
-                <SwapSlippage />
+                <SwapSlippage defaultValue={0.5} />
                 <TokenBalance
                     token={fromDetails && fromDetails[0] && fromDetails[1].name}
                     balance={fromBalance}
                     tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                 />
-                <TokenInput />
+                <TokenInput onInputChange={setFromAmount} value={fromAmount} />
                 <SwitchButton onClick={handleSwitch}>Switch</SwitchButton>
                 <TokenBalance
                     token={toDetails && toDetails[0] && toDetails[1].name}
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
-                <TokenInput />
+                <TokenInput onInputChange={setToAmount} value={toAmount} />
                 <SwapButton disabled={!connected}>{connected ? 'Swap' : 'Not Connected'}</SwapButton>
                 <TradeDetails
                     fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
