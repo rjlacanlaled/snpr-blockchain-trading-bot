@@ -1,16 +1,20 @@
 import styled from 'styled-components';
 
-const TradeDetails = ({ from, to }) => {
+const TradeDetails = ({ fromSymbol, toSymbol, price }) => {
+
+    console.log(fromSymbol, toSymbol, price);
     return (
-        <Container visible={from && to}>
-            <MinimumReceived>1000</MinimumReceived>
-            <Price>100 MTK / 1 BUSD</Price>
+        <Container visible={fromSymbol && toSymbol && price}>
+            <MinimumReceived></MinimumReceived>
+            <Price>
+                1{toSymbol}/{parseFloat(price).toFixed(6)}USD
+            </Price>
         </Container>
     );
 };
 
 const Container = styled.div`
-    display: ${({visible}) => (visible ? 'flex' : 'none')};
+    display: ${({ visible }) => (visible ? 'flex' : 'none')};
 `;
 const MinimumReceived = styled.p``;
 const Price = styled.p``;

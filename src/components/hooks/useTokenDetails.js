@@ -2,23 +2,24 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 
-const fetchDetails = (network, address) => {
-    console.log(network, address);
+const fetchDetails = async (network, address) => {
+    console.log(address);
+    if (!address || !network) return;
     let result;
     try {
-        result = axios.get(network.getFetcherUrl(address));
+        result = await axios.get(network.getFetcherUrl(address));
     } catch (error) {
         return [-1, error];
     }
 
-    return [1, result];
+    return [1, result.data.data];
 };
 
 const useTokenDetails = (network, tokenAddress) => {
-    const [value, setValue] = useState(() => fetchDetails(network, tokenAddress));
+    const [value, setValue] = useState(async () => await fetchDetails(network, tokenAddress));
 
-    useEffect(() => {
-        setValue(fetchDetails(tokenAddress, network));
+    useEffect(async () => {
+        setValue(await fetchDetails(network, tokenAddress));
     }, [tokenAddress, network]);
 
     return [value, setValue];

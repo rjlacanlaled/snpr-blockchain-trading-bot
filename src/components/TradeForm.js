@@ -9,24 +9,42 @@ import TokenBalance from './TokenBalance';
 import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
 
-const TradeForm = () => {
+const TradeForm = ({
+    defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    defaultToToken = '0x129385c4acd0075e45a0c9a5177bdfec9678a138',
+}) => {
     const network = useBlockchainNetwork();
-    const [fromToken, setFromToken] = usePersist('fromTokenAdrress', '');
-    const [toToken, setToToken] = usePersist('toTokenAdrress', '');
+    const [fromToken, setFromToken] = useState(defaultFromToken);
+    const [toToken, setToToken] = useState(defaultToToken);
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
     const [toDetails, setToDetails] = useTokenDetails(network, toToken);
+    const [fromBalance, setFromBalance] = useState(0);
+    const [toBalance, setToBalance] = useState(0);
     const [search, setSearch] = useState('');
-    const [isBuying, setIsBuying] = usePersist(true);
+    const [isBuying, setIsBuying] = useState(true);
 
     useEffect(() => {
         setFromDetails(network, fromToken);
+    }, [fromToken]);
+
+    useEffect(() => {
         setToDetails(network, toToken);
-    }, [fromToken, toToken]);
+    }, [toToken]);
+
+    useEffect(() => {
+        if (isBuying) {
+            setFromToken(defaultFromToken);
+            setToToken(search);
+        } else {
+            setToToken(defaultFromToken);
+            setFromToken(search);
+        }
+    }, [search]);
+
+    useEffect(() => {}, [fromDetails, toDetails]);
 
     const handleSearchChange = e => {
         setSearch(e.target.value);
-
-        isBuying ? setToToken(search) : setFromToken(search);
     };
 
     const handleSubmit = e => {
@@ -36,14 +54,31 @@ const TradeForm = () => {
     return (
         <Container>
             <Form onSubmit={handleSubmit}>
-                <SearchInput onChange={handleSearchChange} value={search} placeholder='Enter token address' />
+                <SearchInput
+                    onPaste={handleSearchChange}
+                    onChange={handleSearchChange}
+                    value={search}
+                    placeholder='Enter token address'
+                />
                 <SwapSlippage />
-                <TokenBalance token={(fromDetails && fromDetails.name) || 'Token'} balance={false || 0} />
+                <TokenBalance
+                    token={fromDetails && fromDetails[0] && fromDetails[1].name}
+                    balance={fromBalance}
+                    tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
+                />
                 <TokenInput />
-                <TokenBalance token={(toDetails && toDetails.name) || 'Token'} balance={false || 0} />
+                <TokenBalance
+                    token={toDetails && toDetails[0] && toDetails[1].name}
+                    balance={toBalance}
+                    tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
+                />
                 <TokenInput />
                 <SwapButton>Swap</SwapButton>
-                <TradeDetails from={fromToken} to={toToken} />
+                <TradeDetails
+                    fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
+                    toSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
+                    price={toDetails && toDetails[0] && toDetails[1].price}
+                />
             </Form>
         </Container>
     );

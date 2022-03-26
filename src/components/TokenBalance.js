@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const TokenBalance = ({ token, balance, tokenSymbol }) => {
     return (
         <Container>
             <Token>{token}</Token>
-            <Balance>{balance} {tokenSymbol}</Balance>
+            <Balance>
+                {balance} {tokenSymbol}
+            </Balance>
         </Container>
     );
 };
