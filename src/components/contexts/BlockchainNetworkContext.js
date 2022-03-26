@@ -17,6 +17,7 @@ const BlockchainNetworkProvider = ({ children }) => {
         getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
         web3: new Web3(defaultProvider),
         eth: new Eth(defaultProvider),
+        wallet: null
     });
 
     const handleAccountChange = async () => {
