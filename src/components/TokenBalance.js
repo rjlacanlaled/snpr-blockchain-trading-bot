@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const TokenBalance = ({ token, balance, tokenSymbol }) => {
     return (
         <Container>
-            <Token>{token}</Token>
+            <Token>{token || 'Select a token'}</Token>
             <Balance>
                 {balance} {tokenSymbol}
             </Balance>

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const TradeDetails = ({ fromSymbol, toSymbol, price }) => {
 
-    console.log(fromSymbol, toSymbol, price);
     return (
         <Container visible={fromSymbol && toSymbol && price}>
             <MinimumReceived></MinimumReceived>

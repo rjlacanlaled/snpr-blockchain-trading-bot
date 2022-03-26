@@ -51,6 +51,12 @@ const TradeForm = ({
         e.preventDefault();
     };
 
+    const handleSwitch = () => {
+        setIsBuying(!isBuying);
+        setFromDetails(toDetails);
+        setToDetails(fromDetails);
+    };
+
     return (
         <Container>
             <Form onSubmit={handleSubmit}>
@@ -67,8 +73,9 @@ const TradeForm = ({
                     tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                 />
                 <TokenInput />
+                <SwitchButton onClick={handleSwitch}>Switch</SwitchButton>
                 <TokenBalance
-                    token={toDetails && toDetails[0] && toDetails[1].name}
+                    token={toDetails && toDetails[0] && toDetails[1].name }
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
@@ -94,6 +101,7 @@ const Form = styled.form`
     padding: 10px;
 `;
 const SwapButton = styled.button``;
+const SwitchButton = styled.button``;
 const SearchInput = styled.input``;
 
 export default TradeForm;

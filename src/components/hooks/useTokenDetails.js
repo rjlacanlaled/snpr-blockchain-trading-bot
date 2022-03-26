@@ -3,7 +3,6 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const fetchDetails = async (network, address) => {
-    console.log(address);
     if (!address || !network) return;
     let result;
     try {
