@@ -15,6 +15,8 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     height: 100%;
+
+    margin-top: 20px;
 `;
 
 export default Trade;

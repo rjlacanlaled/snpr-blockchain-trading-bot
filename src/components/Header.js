@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useBlockchainNetwork from './hooks/useBlockchainNetwork';
+import PageSelection from './PageSelection';
 
 const Header = () => {
     const { connect, disconnect, account, balance, connected } = useBlockchainNetwork();
@@ -10,33 +11,44 @@ const Header = () => {
     };
 
     return (
-        <Container>
-            <Title>Snipr</Title>
-            <BalanceContainer connected={connected}>
-                <ConnectWalletButton onClick={handleConnectWallet}>
-                    {!account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}`}
-                </ConnectWalletButton>
-                <Balance> {connected && `Balance: ${balance} BNB`}</Balance>
-            </BalanceContainer>
-        </Container>
+        <Main>
+            <Container>
+                <Title>Snipr</Title>
+                <BalanceContainer connected={connected}>
+                    <ConnectWalletButton onClick={handleConnectWallet}>
+                        {!account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}`}
+                    </ConnectWalletButton>
+                    <Balance> {connected && `Balance: ${balance} BNB`}</Balance>
+                </BalanceContainer>
+            </Container>
+            <PageSelection />
+        </Main>
     );
 };
+
+const Main = styled.div`
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 100%;
+
+    background-color: #ffffff;
+`;
 
 const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    position: fixed;
-    top: 0;
-
-    background-color: #ffffff;
     min-height: 50px;
     width: 100%;
     padding: 10px 3px 10px 20px;
 
-    border-bottom: 1px solid lightgray  ;
+    border-bottom: 1px solid lightgray;
 `;
+
+
 const ConnectWalletButton = styled.button`
     max-height: 30px;
     padding: 5px 10px 5px 10px;
