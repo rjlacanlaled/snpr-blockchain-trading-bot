@@ -99,7 +99,7 @@ const TradeForm = ({
         <Container>
             <FormHeader>
                 <TradeButtons>
-                    <FiSettings onClick={handleSettings} />
+                    <StyledFiSettings onClick={handleSettings} />
                 </TradeButtons>
                 <Title>Trade</Title>
             </FormHeader>
@@ -203,7 +203,10 @@ const SearchInput = styled.input`
     padding: 10px;
     border: 1px solid lightgray;
 `;
-const Title = styled.p``;
+const Title = styled.p`
+    font-size: 1.2rem;
+    font-weight: 900;
+`;
 
 const StyledMdSwapHoriz = styled(MdSwapHoriz)`
     cursor: pointer;
@@ -220,6 +223,17 @@ const SwitchContainer = styled.div`
 
     &:hover {
         background-color: hsl(184, 100%, 60%);
+    }
+`;
+
+const StyledFiSettings = styled(FiSettings)`
+    color: hsl(184, 75%, 60%);
+    cursor: pointer;
+
+    font-size: 1.2rem;
+
+    &:hover {
+        opacity: 0.5;
     }
 `;
 
