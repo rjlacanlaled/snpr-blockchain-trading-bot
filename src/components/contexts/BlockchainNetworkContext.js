@@ -8,7 +8,9 @@ const defaultProvider = 'wss://speedy-nodes-nyc.moralis.io/f21c061f796d5011345dd
 
 const BlockchainNetworkProvider = ({ children }) => {
     const [eth, setEth] = useState(window.ethereum);
-    const [accounts, setAccounts] = useState([]);
+    const [account, setAccount] = useState();
+    const [balance, setBalance] = useState(0);
+
 
     const [network, setNetwork] = useState({
         blockchain: 'binance',
@@ -17,8 +19,9 @@ const BlockchainNetworkProvider = ({ children }) => {
         eth: new Eth(defaultProvider),
     });
 
-    const handleAccountChange = newAccounts => {
-        setAccounts(newAccounts);
+    const handleAccountChange = async () => {
+        setAccount(eth.selectedAddress);
+        setBalance(await getFormattedBalance());
     };
 
     useEffect(() => {
@@ -28,22 +31,33 @@ const BlockchainNetworkProvider = ({ children }) => {
     }, []);
 
     const connect = async () => {
-        if (accounts.length) return;
+        if (account) return;
         if (!eth) return;
 
         try {
-            setAccounts(await eth.request({ method: 'eth_accounts' }));
+            await eth.request({ method: 'eth_accounts' });
+            setAccount(eth.selectedAddress);
+            setBalance(await getFormattedBalance());
         } catch (err) {
             alert(err);
         }
     };
 
     const disconnect = () => {
-        setAccounts([]);
+        setAccount();
+        setBalance(0);
     };
 
+    const getFormattedBalance = async () => {
+        return parseFloat(network.web3.utils.fromWei(await getBalance(), "ether")).toFixed(4);
+    }
+
+    const getBalance = async () => {
+        return await eth.request({ method: 'eth_getBalance', params: [eth.selectedAddress]});
+    }
+
     return (
-        <BlockchainNetworkContext.Provider value={{ network, eth, accounts, connect, disconnect }}>
+        <BlockchainNetworkContext.Provider value={{ network, eth, account, connect, disconnect, balance }}>
             {children}
         </BlockchainNetworkContext.Provider>
     );
