@@ -55,6 +55,7 @@ const BlockchainNetworkProvider = ({ children }) => {
     };
 
     const getBalance = async () => {
+        console.log(eth.selectedAddress);
         return await eth.request({ method: 'eth_getBalance', params: [eth.selectedAddress] });
     };
 
