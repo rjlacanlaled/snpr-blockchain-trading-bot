@@ -11,6 +11,8 @@ import SwapSlippage from './SwapSlippage';
 import TokenBalance from './TokenBalance';
 import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
+import { FiSettings } from 'react-icons/fi';
+import { MdSwapHoriz } from 'react-icons/md';
 
 const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -95,7 +97,13 @@ const TradeForm = ({
 
     return (
         <Container>
-            <SettingsButton onClick={handleSettings}>Settings</SettingsButton>
+            <FormHeader>
+                <TradeButtons>
+                    <FiSettings onClick={handleSettings} />
+                </TradeButtons>
+                <Title>Trade</Title>
+            </FormHeader>
+
             <Form onSubmit={handleSubmit}>
                 <SearchInput
                     onPaste={handleSearchChange}
@@ -110,14 +118,14 @@ const TradeForm = ({
                     tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setFromAmount} value={fromAmount} />
-                <SwitchButton onClick={handleSwitch}>Switch</SwitchButton>
+                <MdSwapHoriz onClick={handleSwitch} />
                 <TokenBalance
                     token={toDetails && toDetails[0] && toDetails[1].name}
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setToAmount} value={toAmount} />
-                <SwapButton disabled={!connected}>{connected ? 'Swap' : 'Not Connected'}</SwapButton>
+                <SwapButton connected={connected} disabled={!connected}>{connected ? 'Swap' : 'Not Connected'}</SwapButton>
                 <TradeDetails
                     fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                     toSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
@@ -137,15 +145,62 @@ const Container = styled.div`
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    gap: 5px;
+
+    background-color: #ffffff;
+    border-radius: 15px;
+    border: 1px solid lightgray;
+`;
+
+const FormHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 5px;
 `;
 const Form = styled.form`
-    border: 1px solid black;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid lightgray;
     padding: 10px;
+    gap: 5px;
 `;
-const SwapButton = styled.button``;
-const SwitchButton = styled.button``;
-const SettingsButton = styled.button``;
-const SearchInput = styled.input``;
+
+const TradeButtons = styled.div`
+    display: flex;
+    gap: 5px;
+`;
+const SwapButton = styled.button`
+    padding: 5px 10px 5px 10px;
+    width: 100%;
+
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    background-color: ${({connected}) => connected ? '#4BDBE6' : '#ECEAF4'};
+
+    &:hover {
+        background-color: ${({connected}) => connected ? 'hsl(184, 100%, 60%)' : 'gray'};
+    }
+
+    cursor: pointer;
+`;
+const SwitchButton = styled.button`
+    width: 100%;
+    cursor: pointer;
+`;
+const SearchInput = styled.input`
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid lightgray;
+`;
+const Title = styled.p``;
 
 export default TradeForm;
