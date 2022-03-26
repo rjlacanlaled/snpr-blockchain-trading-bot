@@ -14,7 +14,7 @@ const Header = () => {
             <Title>Snipr</Title>
             <BalanceContainer connected={connected}>
                 <ConnectWalletButton onClick={handleConnectWallet}>
-                    {!account ? 'connect wallet' : `disconnect: ${account}`}
+                    {!account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}`}
                 </ConnectWalletButton>
                 <Balance> {connected && `Balance: ${balance} BNB`}</Balance>
             </BalanceContainer>
@@ -33,7 +33,9 @@ const Container = styled.div`
     background-color: #ffffff;
     min-height: 50px;
     width: 100%;
-    padding: 0 20px 0 20px;
+    padding: 10px 3px 10px 20px;
+
+    border-bottom: 1px solid lightgray  ;
 `;
 const ConnectWalletButton = styled.button`
     max-height: 30px;
@@ -41,6 +43,9 @@ const ConnectWalletButton = styled.button`
     border: 1px solid lightgray;
     border-radius: 5px;
     background-color: hsl(184, 75%, 60%);
+
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
 
     &:hover {
@@ -59,7 +64,7 @@ const BalanceContainer = styled.div`
     border-radius: 5px;
 `;
 const Balance = styled.p`
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: white;
     font-weight: 900;
 `;

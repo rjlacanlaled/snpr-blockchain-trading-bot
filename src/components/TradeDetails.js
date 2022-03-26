@@ -7,7 +7,7 @@ const TradeDetails = ({ fromSymbol, toSymbol, price }) => {
             <MinimumReceived></MinimumReceived>
             <Price>
                 Price: 1 {toSymbol}/
-                {parseFloat(price) > 0 ? parseFloat(price).toFixed(2) : parseFloat(price).toFixed(6)}USD
+                {parseInt(price) > 0 ? parseFloat(price).toFixed(2) : parseFloat(price).toFixed(6)} USD
             </Price>
         </Container>
     );

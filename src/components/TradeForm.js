@@ -118,14 +118,19 @@ const TradeForm = ({
                     tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setFromAmount} value={fromAmount} />
-                <MdSwapHoriz onClick={handleSwitch} />
+                <SwitchContainer>
+                    <StyledMdSwapHoriz onClick={handleSwitch} />
+                </SwitchContainer>
+
                 <TokenBalance
                     token={toDetails && toDetails[0] && toDetails[1].name}
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setToAmount} value={toAmount} />
-                <SwapButton connected={connected} disabled={!connected}>{connected ? 'Swap' : 'Not Connected'}</SwapButton>
+                <SwapButton connected={connected} disabled={!connected}>
+                    {connected ? 'Swap' : 'Not Connected'}
+                </SwapButton>
                 <TradeDetails
                     fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                     toSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
@@ -183,18 +188,15 @@ const SwapButton = styled.button`
     font-size: 0.8rem;
     font-weight: 600;
 
-    background-color: ${({connected}) => connected ? '#4BDBE6' : '#ECEAF4'};
+    background-color: ${({ connected }) => (connected ? '#4BDBE6' : '#ECEAF4')};
 
     &:hover {
-        background-color: ${({connected}) => connected ? 'hsl(184, 100%, 60%)' : 'gray'};
+        background-color: ${({ connected }) => (connected ? 'hsl(184, 100%, 60%)' : 'gray')};
     }
 
     cursor: pointer;
 `;
-const SwitchButton = styled.button`
-    width: 100%;
-    cursor: pointer;
-`;
+
 const SearchInput = styled.input`
     width: 100%;
     border-radius: 5px;
@@ -202,5 +204,23 @@ const SearchInput = styled.input`
     border: 1px solid lightgray;
 `;
 const Title = styled.p``;
+
+const StyledMdSwapHoriz = styled(MdSwapHoriz)`
+    cursor: pointer;
+`;
+
+const SwitchContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: hsl(184, 75%, 60%);
+    cursor: pointer;
+
+    &:hover {
+        background-color: hsl(184, 100%, 60%);
+    }
+`;
 
 export default TradeForm;
