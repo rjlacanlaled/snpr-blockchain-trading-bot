@@ -4,9 +4,10 @@ import useBlockchainNetwork from './hooks/useBlockchainNetwork';
 import PageSelection from './PageSelection';
 
 const Header = () => {
-    const { connect, disconnect, account, balance, connected } = useBlockchainNetwork();
+    const { connect, disconnect, account, balance, connected, canConnect } = useBlockchainNetwork();
 
     const handleConnectWallet = async () => {
+        if (!canConnect) return;
         account ? disconnect() : connect();
     };
 
@@ -15,8 +16,8 @@ const Header = () => {
             <Container>
                 <Title>Snipr</Title>
                 <BalanceContainer connected={connected}>
-                    <ConnectWalletButton onClick={handleConnectWallet}>
-                        {!account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}`}
+                    <ConnectWalletButton onClick={handleConnectWallet} disabled={!canConnect}>
+                        {canConnect ? !account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}` : 'install metamask to connect wallet...'}
                     </ConnectWalletButton>
                     <Balance> {connected && `Balance: ${balance} BNB`}</Balance>
                 </BalanceContainer>
@@ -62,6 +63,10 @@ const ConnectWalletButton = styled.button`
 
     &:hover {
         background-color: hsl(184, 100%, 60%);
+    }
+
+    &:disabled {
+        background-color: lightgray;
     }
 `;
 

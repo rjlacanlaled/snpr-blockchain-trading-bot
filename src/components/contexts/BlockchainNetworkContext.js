@@ -13,6 +13,7 @@ const BlockchainNetworkProvider = ({ children }) => {
     const [account, setAccount] = useState();
     const [balance, setBalance] = useState(0);
     const [connected, setConnected] = useState(false);
+    const [canConnect, setCanConnect] = useState(true);
 
     const [network, setNetwork] = useState({
         blockchain: 'binance',
@@ -28,6 +29,7 @@ const BlockchainNetworkProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        if (!eth) return setCanConnect(false);
         eth.on('accountsChanged', handleAccountChange);
 
         return () => eth.removeListener('accountsChanged', handleAccountChange);
@@ -94,6 +96,7 @@ const BlockchainNetworkProvider = ({ children }) => {
                 connected,
                 getTokenBalance,
                 getFormattedTokenBalance,
+                canConnect
             }}
         >
             {children}
