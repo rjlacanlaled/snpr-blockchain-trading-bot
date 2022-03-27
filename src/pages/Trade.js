@@ -14,9 +14,8 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
 
-    margin-top: 20px;
+    padding-top: 20vh;
 `;
 
 export default Trade;

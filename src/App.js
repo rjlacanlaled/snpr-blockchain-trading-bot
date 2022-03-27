@@ -26,8 +26,12 @@ export default function App() {
 }
 
 const Container = styled.div`
+    display: flex;
+    justify-content: center;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
 
-    background-color: #ebf5ff;
+    overflow: auto;
+
+   background-color: #ebf5ff;
 `;

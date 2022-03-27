@@ -30,7 +30,7 @@ const Header = () => {
 const Main = styled.div`
     display: flex;
     flex-direction: column;
-    position: fixed;
+    position: absolute;
     top: 0;
     width: 100%;
 

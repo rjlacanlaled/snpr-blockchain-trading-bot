@@ -14,6 +14,11 @@ const Global = createGlobalStyle`
 
     }
 
+    body {
+        height: 100vh;
+        width: 100vw;
+    }
+
 `;
 
 export default Global;
