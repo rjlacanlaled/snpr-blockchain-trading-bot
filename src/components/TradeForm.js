@@ -16,7 +16,7 @@ import { MdSwapHoriz } from 'react-icons/md';
 
 const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    defaultToToken = '0x129385c4acd0075e45a0c9a5177bdfec9678a138',
+    defaultToToken = '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
 }) => {
     const { network, connected, getTokenBalance, getFormattedTokenBalance } = useBlockchainNetwork();
     const { router, swapExactTokensForTokens } = useUniswap();
