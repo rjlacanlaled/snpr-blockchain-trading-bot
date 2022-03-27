@@ -70,18 +70,31 @@ const BlockchainNetworkProvider = ({ children }) => {
 
     const getTokenBalance = async tokenAddress => {
         if (!network.web3.utils.isAddress(tokenAddress)) return 0;
-        const contract = getContract(erc20Abi, tokenAddress);
-        return await contract.methods.balanceOf(eth.selectedAddress).call();
+        try {
+            const contract = getContract(erc20Abi, tokenAddress);
+            return await contract.methods.balanceOf(eth.selectedAddress).call();
+        } catch(err) {
+            // do nothing
+        }
+
+        return false;
     };
 
     const getFormattedTokenBalance = async tokenAddress => {
         if (!connected) return;
         if (!network.web3.utils.isAddress(tokenAddress)) return 0;
-        const contract = getContract(erc20Abi, tokenAddress);
-        const balance = await getTokenBalance(tokenAddress);
-        const decimal = await contract.methods.decimals().call();
-        const floatBalance = parseFloat(ethers.utils.formatEther(balance, decimal));
-        return floatBalance > 0 ? floatBalance.toFixed(2) : floatBalance.toFixed(6);
+
+        try {
+            const contract = getContract(erc20Abi, tokenAddress);
+            const balance = await getTokenBalance(tokenAddress);
+            const decimal = await contract.methods.decimals().call();
+            const floatBalance = parseFloat(ethers.utils.formatEther(balance, decimal));
+            return floatBalance > 0 ? floatBalance.toFixed(2) : floatBalance.toFixed(6);
+        } catch(err) {
+            // do nothing
+        }
+
+        return false;
     };
 
     return (
@@ -90,13 +103,13 @@ const BlockchainNetworkProvider = ({ children }) => {
                 network,
                 eth,
                 account,
-                connect,
-                disconnect,
                 balance,
                 connected,
+                canConnect,
+                connect,
+                disconnect,
                 getTokenBalance,
                 getFormattedTokenBalance,
-                canConnect
             }}
         >
             {children}
