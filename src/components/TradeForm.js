@@ -13,10 +13,11 @@ import TokenInput from './TokenInput';
 import TradeDetails from './TradeDetails';
 import { FiSettings } from 'react-icons/fi';
 import { MdSwapHoriz } from 'react-icons/md';
+import useFloat from './hooks/useFloat';
 
 const TradeForm = ({
     defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    defaultToToken = '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
+    defaultToToken = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
 }) => {
     const { network, connected, getTokenBalance, getFormattedTokenBalance } = useBlockchainNetwork();
     const { router, swapExactTokensForTokens } = useUniswap();
@@ -28,8 +29,8 @@ const TradeForm = ({
     const [toBalance, setToBalance] = useState(0);
     const [search, setSearch] = useState('');
     const [isBuying, setIsBuying] = useState(true);
-    const [fromAmount, setFromAmount] = useState(0);
-    const [toAmount, setToAmount] = useState(0);
+    const [fromAmount, setFromAmount] = useFloat(0, 30);
+    const [toAmount, setToAmount] = useFloat(0, 30);
 
     const [showSettings, setShowSettings] = useState(false);
 

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import TokenBalance from '../components/TokenBalance';
 import TradeForm from '../components/TradeForm';
 
 const Trade = () => {

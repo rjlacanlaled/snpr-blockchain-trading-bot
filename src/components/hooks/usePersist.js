@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 const fetchSavedValue = (key, value) => {
     if (!value) return;
-    console.log(key);
     const savedValue = JSON.parse(localStorage.getItem(key));
     if (savedValue) return savedValue;
 
