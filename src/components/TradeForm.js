@@ -26,7 +26,7 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
         updateRouter,
     } = useUniswap();
 
-    const { autoTrade } = useTradingBot();
+    const { initAutoTrade, isRunning } = useTradingBot();
     const [fromToken, setFromToken] = useState(getDefaultFromToken());
     const [toToken, setToToken] = useState(getDefaultToToken());
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
@@ -38,6 +38,9 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
     const [fromAmount, setFromAmount] = useFloat(0, 30);
     const [toAmount, setToAmount] = useFloat(0, 30);
     const [slippage, setSlippage] = useFloat(0.5, 30);
+
+    const [previousToken, setPreviousToken] = usePersist('previousTokenForAutoTrade');
+    const [previousAmount, setPreviousAmount] = usePersist('previousAmountForBot');
 
     useEffect(() => {
         const updateData = async () => {
@@ -97,17 +100,29 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        if (auto) return autoTrade(slippage);
+        //token1, token2, slippage, previousToken, previousAmount, profitRate
+        if (auto) {
+            if (!slippage || !previousToken || !previousAmount) return;
 
-        swapExactTokensForTokensSupportingFeeOnTransferTokens(
-            fromAmount,
-            fromToken,
-            toToken,
-            slippage,
-            JSON.parse(localStorage.getItem('gasFee')),
-            JSON.parse(localStorage.getItem('gasLimit')),
-            5
-        );
+            return initAutoTrade(
+                JSON.parse(localStorage.getItem('token1address')),
+                JSON.parse(localStorage.getItem('token2address')),
+                slippage,
+                previousToken,
+                previousAmount,
+                JSON.parse(localStorage.getItem('profitPercentage'))    
+            );
+        } else {
+            swapExactTokensForTokensSupportingFeeOnTransferTokens(
+                fromAmount,
+                fromToken,
+                toToken,
+                slippage,
+                JSON.parse(localStorage.getItem('gasFee')),
+                JSON.parse(localStorage.getItem('gasLimit')),
+                5
+            );
+        }
     };
 
     const handleSwitch = () => {
@@ -135,6 +150,7 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                     placeholder='Enter token address'
                 />
                 <SwapSlippage slippage={slippage} onInputChange={setSlippage} />
+
                 <TokenBalance
                     token={fromDetails && fromDetails[0] && fromDetails[1].name}
                     balance={fromBalance}
@@ -142,7 +158,7 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                 />
                 <TokenInput onInputChange={setFromAmount} value={fromAmount} auto={auto} />
                 <SwitchContainer isDisabled={auto}>
-                    <StyledMdSwapHoriz onClick={handleSwitch}/>
+                    <StyledMdSwapHoriz onClick={handleSwitch} />
                 </SwitchContainer>
 
                 <TokenBalance
@@ -151,6 +167,20 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setToAmount} value={toAmount} auto={auto} />
+
+                <Label htmlFor='previousTokenAddress'>Previous Token Address</Label>
+                <Input
+                    id='previousTokenAddress'
+                    value={previousToken}
+                    onChange={e => setPreviousToken(e.target.value)}
+                />
+                <Label htmlFor='previousTokenAmount'>Previous Token Amount</Label>
+                <Input
+                    id='previousTokenAmount'
+                    value={previousAmount}
+                    onChange={e => setPreviousAmount(e.target.value)}
+                />
+
                 <SwapButton
                     connected={connected}
                     disabled={
@@ -165,7 +195,9 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                         ? fromToken == toToken || fromToken == 'Error' || toToken == 'Error'
                             ? 'Something went wrong, refresh page...'
                             : auto
-                            ? 'Start Bot'
+                            ? isRunning
+                                ? 'Bot is running, click to stop'
+                                : 'Start Bot'
                             : fromAmount <= 0
                             ? 'Amount is less than 0'
                             : 'Swap'
@@ -215,8 +247,11 @@ const TradeButtons = styled.div`
     display: flex;
     gap: 5px;
 `;
-const SwapButton = styled.button`
 
+const Input = styled.input``;
+const Label = styled.label``;
+
+const SwapButton = styled.button`
     padding: 5px 10px 5px 10px;
     width: 100%;
 
@@ -250,7 +285,7 @@ const StyledMdSwapHoriz = styled(MdSwapHoriz)`
 `;
 
 const SwitchContainer = styled.div`
-   display: ${({ isDisabled }) => (isDisabled ? 'none' : 'flex')};
+    display: ${({ isDisabled }) => (isDisabled ? 'none' : 'flex')};
     justify-content: center;
     align-items: center;
     padding: 10px;

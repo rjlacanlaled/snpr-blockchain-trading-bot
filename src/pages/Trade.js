@@ -8,9 +8,10 @@ import TradeForm from '../components/TradeForm';
 import TransactionHistory from '../components/TransactionHistory';
 
 const Trade = ({ auto }) => {
-    const { tradeHistory } = useTradingBot();
+    const { tradeHistory, status } = useTradingBot();
     const [showSettings, setShowSettings] = useState(false);
     const [settingsUpdate, setSettingsUpdate] = useState(0);
+
 
     const handleSettingsConfirm = confirm => {
         setShowSettings(false);
@@ -23,15 +24,6 @@ const Trade = ({ auto }) => {
             <Modal show={showSettings}>
                 <Settings onConfirm={handleSettingsConfirm} />
             </Modal>
-            {auto && (
-                <StatusContainer>
-                    <StatusBox status={'currently running'} />
-                    <TransactionHistory
-                        tradeHistory={tradeHistory}
-                        headers={['amountIn', 'amountInSymbol', 'amountOut', 'amountOutSymbol', 'profit']}
-                    />
-                </StatusContainer>
-            )}
         </Container>
     );
 };

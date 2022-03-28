@@ -72,18 +72,12 @@ const UniswapContextProvider = ({ children }) => {
         });
     };
 
-    const swapExactTokensForTokensSupportingFeeOnTransferTokens = async (
-        amountIn,
-        tokenIn,
-        tokenOut,
-        slippage,
-    ) => {
+    const swapExactTokensForTokensSupportingFeeOnTransferTokens = async (amountIn, tokenIn, tokenOut, slippage) => {
         const tokenInDecimal = await getTokenDecimal(tokenIn);
         const tokenOutDecimal = await getTokenDecimal(tokenOut);
-        const parsedAmountIn = ethers.utils.parseUnits(amountIn, tokenInDecimal);
 
         const tradeDetails = await getTradeDetails(
-            parsedAmountIn,
+            amountIn,
             tokenIn,
             tokenInDecimal,
             tokenOut,
@@ -99,7 +93,7 @@ const UniswapContextProvider = ({ children }) => {
         try {
             updateRouter();
             const tx = await router.methods.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                parsedAmountIn,
+                amountIn,
                 amountOutMin,
                 [tokenIn, tokenOut],
                 process.env.REACT_APP_WALLET_ADDRESS,
@@ -117,7 +111,7 @@ const UniswapContextProvider = ({ children }) => {
             );
 
             const executeTx = await transactionRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                parsedAmountIn,
+                amountIn,
                 amountOutMin,
                 [tokenIn, tokenOut],
                 process.env.REACT_APP_WALLET_ADDRESS,
@@ -127,17 +121,94 @@ const UniswapContextProvider = ({ children }) => {
                     gasPrice: parsedGasPrice,
                 }
             );
-            
 
-            console.log(executeTx);
+            return [1, executeTx];
         } catch (err) {
-            console.log(err.toString());
+            return [-1, err.toString()];
         }
     };
 
+    const swapExactTokensForTokensSupportingFeeOnTransferWithAmountOutMin = async (
+        amountIn,
+        tokenIn,
+        tokenOut,
+        slippage,
+        expectedAmountOutMin
+    ) => {
+        try {
+            console.log({ amountIn });
+            const tokenInDecimal = await getTokenDecimal(tokenIn);
+            const tokenOutDecimal = await getTokenDecimal(tokenOut);
+
+            const tradeDetails = await getTradeDetails(
+                amountIn,
+                tokenIn,
+                tokenInDecimal,
+                tokenOut,
+                tokenOutDecimal,
+                parseFloat(slippage)
+            );
+
+            if (tradeDetails[0] < 1) return false;
+
+            const { trade, slippageTolerance } = tradeDetails[1];
+            const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw.toString();
+
+            console.log({ amountOutMin: ethers.utils.formatUnits(amountOutMin, tokenOutDecimal) });
+            console.log({
+                expectedAmountOutMin: ethers.utils.formatUnits(expectedAmountOutMin.toString(), tokenOutDecimal),
+            });
+
+            if (!ethers.BigNumber.from(amountOutMin).gte(ethers.BigNumber.from(expectedAmountOutMin)))
+                return [-1, amountOutMin];
+
+            try {
+                updateRouter();
+                const tx = await router.methods.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+                    amountIn,
+                    amountOutMin,
+                    [tokenIn, tokenOut],
+                    process.env.REACT_APP_WALLET_ADDRESS,
+                    parseFloat('1000000') * 60000
+                );
+
+                const gas = await tx.estimateGas();
+
+                const transactionRouter = getTransactionRouter();
+
+                const parsedGasPrice = ethers.utils.parseUnits(JSON.parse(localStorage.getItem('gasFee')), 'gwei');
+                const parsedGasLimit = ethers.utils.parseUnits(
+                    (gas + parseFloat(JSON.parse(localStorage.getItem('gasLimit')))).toString(),
+                    'wei'
+                );
+
+                const executeTx = await transactionRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+                    amountIn,
+                    amountOutMin,
+                    [tokenIn, tokenOut],
+                    process.env.REACT_APP_WALLET_ADDRESS,
+                    Math.floor(Date.now() / 1000) + 60 * 20,
+                    {
+                        gasLimit: parsedGasLimit,
+                        gasPrice: parsedGasPrice,
+                    }
+                );
+
+                return [1, executeTx];
+            } catch (err) {
+                return [-1, err.toString()];
+            }
+        } catch (err) {
+            return [-1, err.toString()];
+        }
+    };
 
     const getTransactionRouter = () => {
-        const routerContract = new ethers.Contract(defaultRouter, pancakeswapAbi, network.wallet.connect(network.provider));
+        const routerContract = new ethers.Contract(
+            defaultRouter,
+            pancakeswapAbi,
+            network.wallet.connect(network.provider)
+        );
 
         return routerContract;
     };
@@ -160,13 +231,14 @@ const UniswapContextProvider = ({ children }) => {
         const tokenOutDecimal = await getTokenDecimal(tokenOut);
         const parsedAmountIn = ethers.utils.parseUnits(amountIn, tokenInDecimal);
 
-        return {tokenInDecimal, tokenOutDecimal, parsedAmountIn};
-    }
+        return { tokenInDecimal, tokenOutDecimal, parsedAmountIn };
+    };
 
     const getTradeDetails = async (amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage) => {
+        console.log({ amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage });
 
-        console.log({amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage});
-        
+        console.log(ethers.utils.formatUnits(amountIn, tokenInDecimal));
+
         try {
             const slippageTolerance = new Percent(Math.floor(slippage * 100).toString(), '10000');
 
@@ -177,9 +249,10 @@ const UniswapContextProvider = ({ children }) => {
             const pair = await Fetcher.fetchPairData(tokenA, tokenB, network.wallet.connect(network.provider));
             const route = new Route([pair], tokenA);
             const trade = new Trade(route, new TokenAmount(tokenA, amountIn), TradeType.EXACT_INPUT);
-            console.log(tokenOutDecimal);
-            const amountOutMin = ethers.utils.formatUnits(trade.minimumAmountOut(slippageTolerance).raw.toString(), tokenOutDecimal);
-            console.log(amountOutMin);
+            const amountOutMin = ethers.utils.formatUnits(
+                trade.minimumAmountOut(slippageTolerance).raw.toString(),
+                tokenOutDecimal
+            );
 
             return [1, { trade, slippageTolerance, amountOutMin }];
         } catch (ex) {
@@ -197,11 +270,11 @@ const UniswapContextProvider = ({ children }) => {
                 getDefaultToToken,
                 swapExactTokensForTokens,
                 swapExactTokensForTokensSupportingFeeOnTransferTokens,
+                swapExactTokensForTokensSupportingFeeOnTransferWithAmountOutMin,
                 sendTransaction,
                 updateRouter,
                 getFormmatedTradeInputs,
-                getTradeDetails
-                
+                getTradeDetails,
             }}
         >
             {children}

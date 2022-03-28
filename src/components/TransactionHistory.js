@@ -8,7 +8,7 @@ const TransactionHistory = ({ tradeHistory, headers }) => {
             <StyledTableContainer>
                 <StyledTable>
                     <StyledTableHead>
-                        <TableRow>{headers && headers.map(header => <TableHeader>{header}</TableHeader>)}</TableRow>
+                        <TableRow>{headers && headers.map(header => <TableHeader key={header}>{header}</TableHeader>)}</TableRow>
                     </StyledTableHead>
 
                     <StyledTableBody></StyledTableBody>
