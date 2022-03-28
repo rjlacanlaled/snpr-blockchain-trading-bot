@@ -16,7 +16,8 @@ export default function App() {
                     <Container>
                         <Routes>
                             <Route path='/' element={<Trade />} />
-                            <Route path="/order" element={<Trade />}/>
+                            <Route path='/order' element={<Trade />} />
+                            <Route path='auto' element={<Trade auto={true} />} />
                         </Routes>
                     </Container>
                 </UniswapContextProvider>
@@ -33,5 +34,5 @@ const Container = styled.div`
 
     overflow: auto;
 
-   background-color: #ebf5ff;
+    background-color: #ebf5ff;
 `;

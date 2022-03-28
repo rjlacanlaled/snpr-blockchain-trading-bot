@@ -6,14 +6,16 @@ import TradeForm from '../components/TradeForm';
 
 const Trade = () => {
     const [showSettings, setShowSettings] = useState(false);
+    const [settingsUpdate, setSettingsUpdate] = useState(0);
 
     const handleSettingsConfirm = confirm => {
         setShowSettings(false);
+        setSettingsUpdate(settingsUpdate + 1);
     };
 
     return (
         <Container>
-            <TradeForm onSettingsClick={setShowSettings} />
+            <TradeForm onSettingsClick={setShowSettings} onSettingsUpdate={settingsUpdate}/>
             <Modal show={showSettings}>
                 <Settings onConfirm={handleSettingsConfirm} />
             </Modal>

@@ -20,7 +20,8 @@ const BlockchainNetworkProvider = ({ children }) => {
         getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
         web3: new Web3(defaultProvider),
         eth: new Eth(defaultProvider),
-        wallet: null,
+        provider: new ethers.providers.WebSocketProvider(defaultProvider),
+        wallet: ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC),
     });
 
     const handleAccountChange = async () => {
@@ -106,6 +107,15 @@ const BlockchainNetworkProvider = ({ children }) => {
         }
     };
 
+    const getTokenDecimal = async tokenAddress => {
+        try {
+            const contract = getContract(erc20Abi, tokenAddress);
+            return await contract.methods.decimals().call();
+        } catch (err) {
+            return 'Error';
+        }
+    };
+
     return (
         <BlockchainNetworkContext.Provider
             value={{
@@ -119,7 +129,8 @@ const BlockchainNetworkProvider = ({ children }) => {
                 disconnect,
                 getTokenBalance,
                 getFormattedTokenBalance,
-                getTokenSymbol
+                getTokenSymbol,
+                getTokenDecimal,
             }}
         >
             {children}

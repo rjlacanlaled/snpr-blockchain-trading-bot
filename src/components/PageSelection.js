@@ -39,6 +39,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     min-height: 50px;
+    z-index: 10;
 `;
 
 export const StyledLink = styled(Link)`

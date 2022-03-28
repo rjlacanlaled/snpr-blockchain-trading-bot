@@ -4,20 +4,31 @@ import useBlockchainNetwork from './hooks/useBlockchainNetwork';
 import usePersist from './hooks/usePersist';
 import useUniswap from './hooks/useUniswap';
 
+/*
+    { transaction hash, amountIn, amountInSymbol, amountOut, amountOutsymbol, profit }
+*/
+
 const Settings = ({ onConfirm }) => {
     const { getTokenSymbol } = useBlockchainNetwork();
     const { getDefaultFromToken, getDefaultToToken } = useUniswap();
-    const [gasFee, setGasFee] = usePersist('gasFee', 0.5);
-    const [gasLimit, setGasLimit] = usePersist('gasLimit', 800000);
+    const [gasFee, setGasFee] = usePersist('gasFee', '5');
+    const [gasLimit, setGasLimit] = usePersist('gasLimit', '800000');
     const [maxSlippage, setMaxSlippage] = usePersist('maxSlippage', 40);
     const [buyToken, setBuyToken] = usePersist('defaultBuyToken', getDefaultFromToken());
     const [sellToken, setSellToken] = usePersist('defaultSellToken', getDefaultToToken());
+    const [profitPercentage, setProfitPercentage] = usePersist('profitPercentage', 10);
     const [buySymbol, setBuySymbol] = useState('');
     const [sellSymbol, setSellSymbol] = useState('');
+    const [token1Address, setToken1Address] = usePersist('token1address', '');
+    const [token2Address, setToken2Address] = usePersist('token2address', '');
+    const [token1Symbol, setToken1Symbol] = useState('');
+    const [token2Symbol, setToken2Symbol] = useState('');
 
     useEffect(async () => {
         setBuySymbol(await getTokenSymbol(buyToken));
         setSellSymbol(await getTokenSymbol(sellToken));
+        setToken1Symbol(await getTokenSymbol(token1Address));
+        setToken2Symbol(await getTokenSymbol(token2Address));
     }, []);
 
     useEffect(async () => {
@@ -27,6 +38,14 @@ const Settings = ({ onConfirm }) => {
     useEffect(async () => {
         setSellSymbol(await getTokenSymbol(sellToken));
     }, [sellToken]);
+
+    useEffect(async () => {
+        setToken1Symbol(await getTokenSymbol(token1Address));
+    }, [token1Address]);
+
+    useEffect(async () => {
+        setToken2Symbol(await getTokenSymbol(token2Address));
+    }, [token2Address]);
 
     return (
         <Container>
@@ -55,6 +74,19 @@ const Settings = ({ onConfirm }) => {
                 onChange={e => setMaxSlippage(e.target.value)}
             />
 
+            <Label htmlFor='autoTrade'> Auto Trade Settings</Label>
+            <Label htmlFor='profitPercentage'>Profit Percentage</Label>
+            <Input
+                id='profitPercentage'
+                placeholder='Profit percentage'
+                value={profitPercentage}
+                onChange={e => setProfitPercentage(e.target.value)}
+            />
+            <Label htmlFor='token1address'>Token 1 Address : {token1Symbol} </Label>
+            <Input id='token1address' value={token1Address} onChange={e => setToken1Address(e.target.value)} />
+            <Label htmlFor='token2address'>Token 2 Address: {token2Symbol} </Label>
+            <Input id='token2address' value={token2Address} onChange={e => setToken2Address(e.target.value)} />
+
             <ButtonContainer>
                 <PrimaryButton onClick={() => onConfirm(true)}>Save</PrimaryButton>
                 <NegativeButton onClick={() => onConfirm(false)}>Cancel</NegativeButton>
@@ -66,13 +98,19 @@ const Settings = ({ onConfirm }) => {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    top: 0;
     gap: 8px;
+    
 
     background-color: #eceff4;
     color: white;
     min-width: 400px;
 
     border-radius: 20px;
+
+    max-height: 600px;
+    z-index: 100;
+    overflow: scroll;
 `;
 const Input = styled.input`
     padding: 10px;

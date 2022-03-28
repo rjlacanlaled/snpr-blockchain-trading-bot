@@ -33,6 +33,7 @@ const Main = styled.div`
     position: absolute;
     top: 0;
     width: 100%;
+    z-index: 10;
 
     background-color: #ffffff;
 `;

@@ -15,13 +15,14 @@ import { FiSettings } from 'react-icons/fi';
 import { MdSwapHoriz } from 'react-icons/md';
 import useFloat from './hooks/useFloat';
 
-const TradeForm = ({ onSettingsClick }) => {
+const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
     const { network, connected, getFormattedTokenBalance } = useBlockchainNetwork();
     const {
         swapExactTokensForTokens,
-        swapExactTokensForETHSupportingFeeOnTransferTokens,
+        swapExactTokensForTokensSupportingFeeOnTransferTokens,
         getDefaultFromToken,
         getDefaultToToken,
+        updateRouter
     } = useUniswap();
     const [fromToken, setFromToken] = useState(getDefaultFromToken());
     const [toToken, setToToken] = useState(getDefaultToToken());
@@ -34,6 +35,13 @@ const TradeForm = ({ onSettingsClick }) => {
     const [fromAmount, setFromAmount] = useFloat(0, 30);
     const [toAmount, setToAmount] = useFloat(0, 30);
     const [slippage, setSlippage] = useFloat(0.5, 30);
+    const [autoTrade, setAutoTrade] = useState(auto);
+
+    useEffect(async () => {
+        setFromToken(getDefaultFromToken());
+        setToToken(getDefaultToToken());
+        updateRouter();
+    }, [onSettingsUpdate]);
 
     useEffect(async () => {
         setFromDetails(network, fromToken);
@@ -71,7 +79,23 @@ const TradeForm = ({ onSettingsClick }) => {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        swapExactTokensForTokens(fromAmount, fromToken, toToken);
+
+        // amountIn,
+        // tokenIn,
+        // tokenOut,
+        // slippage,
+        // gasPrice,
+        // gasLimit,
+        // deadline
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            fromAmount,
+            fromToken,
+            toToken,
+            slippage,
+            JSON.parse(localStorage.getItem('gasFee')),
+            JSON.parse(localStorage.getItem('gasLimit')),
+            5
+        );
     };
 
     const handleSwitch = () => {
