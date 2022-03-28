@@ -1,9 +1,13 @@
 import styled from 'styled-components';
 
-const SwapSlippage = () => {
+const SwapSlippage = ({ onInputChange, slippage }) => {
     return (
         <Container>
-            <Slippage defaultValue={0.5} placeholder={0.5}></Slippage>
+            <Slippage
+                value={slippage}
+                placeholder={0.5}
+                onChange={e => onInputChange(e.target.value)}
+            />
             <AutoSlippage>Auto</AutoSlippage>
         </Container>
     );
@@ -21,7 +25,6 @@ const Slippage = styled.input`
     border-radius: 10px;
     border: 1px solid lightgray;
     flex: 1 75%;
-
 `;
 const AutoSlippage = styled.button`
     padding: 5px 10px 5px 10px;

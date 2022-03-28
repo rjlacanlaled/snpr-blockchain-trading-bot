@@ -8,6 +8,7 @@ const fetchDetails = async (network, address) => {
     try {
         result = await axios.get(network.getFetcherUrl(address));
     } catch (error) {
+        console.log(error.response)
         return [-1, error];
     }
 

@@ -15,14 +15,16 @@ import { FiSettings } from 'react-icons/fi';
 import { MdSwapHoriz } from 'react-icons/md';
 import useFloat from './hooks/useFloat';
 
-const TradeForm = ({
-    defaultFromToken = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    defaultToToken = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-}) => {
-    const { network, connected, getTokenBalance, getFormattedTokenBalance } = useBlockchainNetwork();
-    const { router, swapExactTokensForTokens } = useUniswap();
-    const [fromToken, setFromToken] = useState(defaultFromToken);
-    const [toToken, setToToken] = useState(defaultToToken);
+const TradeForm = ({ onSettingsClick }) => {
+    const { network, connected, getFormattedTokenBalance } = useBlockchainNetwork();
+    const {
+        swapExactTokensForTokens,
+        swapExactTokensForETHSupportingFeeOnTransferTokens,
+        getDefaultFromToken,
+        getDefaultToToken,
+    } = useUniswap();
+    const [fromToken, setFromToken] = useState(getDefaultFromToken());
+    const [toToken, setToToken] = useState(getDefaultToToken());
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
     const [toDetails, setToDetails] = useTokenDetails(network, toToken);
     const [fromBalance, setFromBalance] = useState(0);
@@ -31,8 +33,7 @@ const TradeForm = ({
     const [isBuying, setIsBuying] = useState(true);
     const [fromAmount, setFromAmount] = useFloat(0, 30);
     const [toAmount, setToAmount] = useFloat(0, 30);
-
-    const [showSettings, setShowSettings] = useState(false);
+    const [slippage, setSlippage] = useFloat(0.5, 30);
 
     useEffect(async () => {
         setFromDetails(network, fromToken);
@@ -51,10 +52,10 @@ const TradeForm = ({
 
     useEffect(() => {
         if (isBuying) {
-            setFromToken(defaultFromToken);
+            setFromToken(getDefaultFromToken());
             setToToken(search);
         } else {
-            setToToken(defaultFromToken);
+            setToToken(getDefaultFromToken());
             setFromToken(search);
         }
     }, [search]);
@@ -70,10 +71,7 @@ const TradeForm = ({
 
     const handleSubmit = async e => {
         e.preventDefault();
-        console.log(fromAmount);
-        console.log(fromDetails);
-        console.log(toAmount);
-        console.log(toDetails);
+        swapExactTokensForTokens(fromAmount, fromToken, toToken);
     };
 
     const handleSwitch = () => {
@@ -81,19 +79,7 @@ const TradeForm = ({
     };
 
     const handleSettings = () => {
-        setShowSettings(true);
-    };
-
-    const handleSettingsConfirm = confirm => {
-        setShowSettings(false);
-    };
-
-    const handleFromAmountChange = e => {
-        setFromAmount(e.target.value);
-    };
-
-    const handleToAmountChange = e => {
-        setToAmount(e.target.value);
+        onSettingsClick(true);
     };
 
     return (
@@ -112,7 +98,7 @@ const TradeForm = ({
                     value={search}
                     placeholder='Enter token address'
                 />
-                <SwapSlippage defaultValue={0.5} />
+                <SwapSlippage slippage={slippage} onInputChange={setSlippage} />
                 <TokenBalance
                     token={fromDetails && fromDetails[0] && fromDetails[1].name}
                     balance={fromBalance}
@@ -129,7 +115,7 @@ const TradeForm = ({
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
                 <TokenInput onInputChange={setToAmount} value={toAmount} />
-                <SwapButton connected={connected} disabled={!connected}>
+                <SwapButton connected={connected} disabled={!connected || fromAmount <= 0}>
                     {connected ? 'Swap' : 'Not Connected'}
                 </SwapButton>
                 <TradeDetails
@@ -138,10 +124,6 @@ const TradeForm = ({
                     price={toDetails && toDetails[0] && toDetails[1].price}
                 />
             </Form>
-
-            <Modal show={showSettings}>
-                <Settings onConfirm={handleSettingsConfirm} />
-            </Modal>
         </Container>
     );
 };
@@ -193,6 +175,10 @@ const SwapButton = styled.button`
 
     &:hover {
         background-color: ${({ connected }) => (connected ? 'hsl(184, 100%, 60%)' : 'gray')};
+    }
+
+    &:disabled {
+        background-color: lightgray;
     }
 
     cursor: pointer;

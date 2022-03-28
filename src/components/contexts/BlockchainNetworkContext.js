@@ -73,7 +73,7 @@ const BlockchainNetworkProvider = ({ children }) => {
         try {
             const contract = getContract(erc20Abi, tokenAddress);
             return await contract.methods.balanceOf(eth.selectedAddress).call();
-        } catch(err) {
+        } catch (err) {
             // do nothing
         }
 
@@ -90,11 +90,20 @@ const BlockchainNetworkProvider = ({ children }) => {
             const decimal = await contract.methods.decimals().call();
             const floatBalance = parseFloat(ethers.utils.formatEther(balance, decimal));
             return floatBalance > 0 ? floatBalance.toFixed(2) : floatBalance.toFixed(6);
-        } catch(err) {
+        } catch (err) {
             // do nothing
         }
 
         return false;
+    };
+
+    const getTokenSymbol = async tokenAddress => {
+        try {
+            const contract = getContract(erc20Abi, tokenAddress);
+            return await contract.methods.symbol().call();
+        } catch (err) {
+            return 'Error';
+        }
     };
 
     return (
@@ -110,6 +119,7 @@ const BlockchainNetworkProvider = ({ children }) => {
                 disconnect,
                 getTokenBalance,
                 getFormattedTokenBalance,
+                getTokenSymbol
             }}
         >
             {children}

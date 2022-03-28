@@ -1,16 +1,59 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useBlockchainNetwork from './hooks/useBlockchainNetwork';
+import usePersist from './hooks/usePersist';
+import useUniswap from './hooks/useUniswap';
 
 const Settings = ({ onConfirm }) => {
+    const { getTokenSymbol } = useBlockchainNetwork();
+    const { getDefaultFromToken, getDefaultToToken } = useUniswap();
+    const [gasFee, setGasFee] = usePersist('gasFee', 0.5);
+    const [gasLimit, setGasLimit] = usePersist('gasLimit', 800000);
+    const [maxSlippage, setMaxSlippage] = usePersist('maxSlippage', 40);
+    const [buyToken, setBuyToken] = usePersist('defaultBuyToken', getDefaultFromToken());
+    const [sellToken, setSellToken] = usePersist('defaultSellToken', getDefaultToToken());
+    const [buySymbol, setBuySymbol] = useState('');
+    const [sellSymbol, setSellSymbol] = useState('');
+
+    useEffect(async () => {
+        setBuySymbol(await getTokenSymbol(buyToken));
+        setSellSymbol(await getTokenSymbol(sellToken));
+    }, []);
+
+    useEffect(async () => {
+        setBuySymbol(await getTokenSymbol(buyToken));
+    }, [buyToken]);
+
+    useEffect(async () => {
+        setSellSymbol(await getTokenSymbol(sellToken));
+    }, [sellToken]);
+
     return (
         <Container>
             <TitleContainer>
                 <Title>Settings</Title>
             </TitleContainer>
 
+            <Label htmlFor='buyToken'>Default Buy : {buySymbol}</Label>
+            <Input id='buyToken' value={buyToken} onChange={e => setBuyToken(e.target.value)} />
+            <Label htmlFor='sellToken'>Default Sell : {sellSymbol} </Label>
+            <Input id='sellToken' value={sellToken} onChange={e => setSellToken(e.target.value)} />
             <Label htmlFor='gasFee'>Gas fee</Label>
-            <Input id='gasFee' placeholder='Gas fee (GWEI)' defaultValue={5} />
+            <Input id='gasFee' placeholder='Gas fee (GWEI)' value={gasFee} onChange={e => setGasFee(e.target.value)} />
+            <Label htmlFor='gasLimit'>Gas Limit</Label>
+            <Input
+                id='gasLimit'
+                placeHolder='Gas limit (WEI)'
+                value={gasLimit}
+                onChange={e => setGasLimit(e.target.value)}
+            />
             <Label htmlFor='maxSlippage'>Max slippage</Label>
-            <Input placeholder='Max Slippage' defaultValue={0.5} />
+            <Input
+                id='maxSlippage'
+                placeholder='Max Slippage'
+                value={maxSlippage}
+                onChange={e => setMaxSlippage(e.target.value)}
+            />
 
             <ButtonContainer>
                 <PrimaryButton onClick={() => onConfirm(true)}>Save</PrimaryButton>
@@ -27,6 +70,7 @@ const Container = styled.div`
 
     background-color: #eceff4;
     color: white;
+    min-width: 400px;
 
     border-radius: 20px;
 `;
