@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-const TokenInput = ({ onInputChange, value, maxAmount }) => {
+const TokenInput = ({ onInputChange, value, maxAmount, auto }) => {
+
     return (
         <Container>
-            <Amount onChange={e => onInputChange(e.target.value)} value={value} />
+            <Amount onChange={e => onInputChange(e.target.value)} value={value} disabled={auto} />
             <MaxButton onClick={e => onInputChange(maxAmount)}>Max</MaxButton>
         </Container>
     );

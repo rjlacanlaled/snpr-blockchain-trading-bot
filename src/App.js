@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Global from './components/styles/Global';
 import Trade from './pages/Trade';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import TradingBotContextProvider, { TradingBotContext } from './components/contexts/TradingBotContext';
 
 export default function App() {
     return (
@@ -14,11 +15,13 @@ export default function App() {
                     <Global />
                     <Header />
                     <Container>
-                        <Routes>
-                            <Route path='/' element={<Trade />} />
-                            <Route path='/order' element={<Trade />} />
-                            <Route path='auto' element={<Trade auto={true} />} />
-                        </Routes>
+                        <TradingBotContextProvider>
+                            <Routes>
+                                <Route path='/' element={<Trade auto={false} />} />
+                                <Route path='/order' element={<Trade auto={false} />} />
+                                <Route path='auto' element={<Trade auto={true} />} />
+                            </Routes>
+                        </TradingBotContextProvider>
                     </Container>
                 </UniswapContextProvider>
             </BlockchainNetworkProvider>

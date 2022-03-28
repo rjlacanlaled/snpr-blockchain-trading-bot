@@ -1,19 +1,29 @@
-import styled from "styled-components";
-import { Table, TableBody, TableContainer, TableHead, TableHeader, TableRow } from "./styles/Table.styled";
+import styled from 'styled-components';
+import DataTable from './DataTable';
+import { Table, TableBody, TableContainer, TableData, TableHead, TableHeader, TableRow } from './styles/Table.styled';
 
+const TransactionHistory = ({ tradeHistory, headers }) => {
+    return (
+        <Container>
+            <StyledTableContainer>
+                <StyledTable>
+                    <StyledTableHead>
+                        <TableRow>{headers && headers.map(header => <TableHeader>{header}</TableHeader>)}</TableRow>
+                    </StyledTableHead>
 
-const TransactionHistory = () => {
+                    <StyledTableBody></StyledTableBody>
+                </StyledTable>
+            </StyledTableContainer>
+        </Container>
+    );
+};
 
-    return 
-    <Container>
-            
-    </Container>
-}
-
-const Container = styled.div``;
+const Container = styled.div`
+    font-size: 0.5rem;
+`;
 const StyledTableContainer = styled(TableContainer)``;
 const StyledTable = styled(Table)``;
-const StyledTableHead = styled(TableHead)``;``
+const StyledTableHead = styled(TableHead)``;
 const StyledTableBody = styled(TableBody)``;
 const StyledTableHeader = styled(TableHeader)``;
 const StyledTableRow = styled(TableRow)``;

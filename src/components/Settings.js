@@ -11,12 +11,12 @@ import useUniswap from './hooks/useUniswap';
 const Settings = ({ onConfirm }) => {
     const { getTokenSymbol } = useBlockchainNetwork();
     const { getDefaultFromToken, getDefaultToToken } = useUniswap();
-    const [gasFee, setGasFee] = usePersist('gasFee', '5');
-    const [gasLimit, setGasLimit] = usePersist('gasLimit', '800000');
-    const [maxSlippage, setMaxSlippage] = usePersist('maxSlippage', 40);
-    const [buyToken, setBuyToken] = usePersist('defaultBuyToken', getDefaultFromToken());
-    const [sellToken, setSellToken] = usePersist('defaultSellToken', getDefaultToToken());
-    const [profitPercentage, setProfitPercentage] = usePersist('profitPercentage', 10);
+    const [gasFee, setGasFee] = usePersist('gasFee', '');
+    const [gasLimit, setGasLimit] = usePersist('gasLimit', '');
+    const [maxSlippage, setMaxSlippage] = usePersist('maxSlippage', '');
+    const [buyToken, setBuyToken] = usePersist('defaultBuyToken', '');
+    const [sellToken, setSellToken] = usePersist('defaultSellToken', '');
+    const [profitPercentage, setProfitPercentage] = usePersist('profitPercentage', '');
     const [buySymbol, setBuySymbol] = useState('');
     const [sellSymbol, setSellSymbol] = useState('');
     const [token1Address, setToken1Address] = usePersist('token1address', '');

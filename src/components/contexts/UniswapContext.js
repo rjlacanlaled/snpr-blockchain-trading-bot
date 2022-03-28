@@ -77,9 +77,6 @@ const UniswapContextProvider = ({ children }) => {
         tokenIn,
         tokenOut,
         slippage,
-        gasPrice,
-        gasLimit,
-        deadline
     ) => {
         const tokenInDecimal = await getTokenDecimal(tokenIn);
         const tokenOutDecimal = await getTokenDecimal(tokenOut);
@@ -94,7 +91,6 @@ const UniswapContextProvider = ({ children }) => {
             parseFloat(slippage)
         );
 
-        console.log(tradeDetails);
         if (tradeDetails[0] < 1) return false;
 
         const { trade, slippageTolerance } = tradeDetails[1];
@@ -139,6 +135,7 @@ const UniswapContextProvider = ({ children }) => {
         }
     };
 
+
     const getTransactionRouter = () => {
         const routerContract = new ethers.Contract(defaultRouter, pancakeswapAbi, network.wallet.connect(network.provider));
 
@@ -157,7 +154,19 @@ const UniswapContextProvider = ({ children }) => {
         return defaultToToken;
     };
 
+    const getFormmatedTradeInputs = async (amountIn, tokenIn, tokenOut) => {
+        console.log('amountIn', amountIn);
+        const tokenInDecimal = await getTokenDecimal(tokenIn);
+        const tokenOutDecimal = await getTokenDecimal(tokenOut);
+        const parsedAmountIn = ethers.utils.parseUnits(amountIn, tokenInDecimal);
+
+        return {tokenInDecimal, tokenOutDecimal, parsedAmountIn};
+    }
+
     const getTradeDetails = async (amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage) => {
+
+        console.log({amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage});
+        
         try {
             const slippageTolerance = new Percent(Math.floor(slippage * 100).toString(), '10000');
 
@@ -168,9 +177,13 @@ const UniswapContextProvider = ({ children }) => {
             const pair = await Fetcher.fetchPairData(tokenA, tokenB, network.wallet.connect(network.provider));
             const route = new Route([pair], tokenA);
             const trade = new Trade(route, new TokenAmount(tokenA, amountIn), TradeType.EXACT_INPUT);
+            console.log(tokenOutDecimal);
+            const amountOutMin = ethers.utils.formatUnits(trade.minimumAmountOut(slippageTolerance).raw.toString(), tokenOutDecimal);
+            console.log(amountOutMin);
 
-            return [1, { trade, slippageTolerance }];
+            return [1, { trade, slippageTolerance, amountOutMin }];
         } catch (ex) {
+            console.log(ex.toString());
             return [-1, ex.toString()];
         }
     };
@@ -186,6 +199,9 @@ const UniswapContextProvider = ({ children }) => {
                 swapExactTokensForTokensSupportingFeeOnTransferTokens,
                 sendTransaction,
                 updateRouter,
+                getFormmatedTradeInputs,
+                getTradeDetails
+                
             }}
         >
             {children}

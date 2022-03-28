@@ -14,6 +14,7 @@ import TradeDetails from './TradeDetails';
 import { FiSettings } from 'react-icons/fi';
 import { MdSwapHoriz } from 'react-icons/md';
 import useFloat from './hooks/useFloat';
+import useTradingBot from './hooks/useTradingBot';
 
 const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
     const { network, connected, getFormattedTokenBalance } = useBlockchainNetwork();
@@ -22,8 +23,10 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
         swapExactTokensForTokensSupportingFeeOnTransferTokens,
         getDefaultFromToken,
         getDefaultToToken,
-        updateRouter
+        updateRouter,
     } = useUniswap();
+
+    const { autoTrade } = useTradingBot();
     const [fromToken, setFromToken] = useState(getDefaultFromToken());
     const [toToken, setToToken] = useState(getDefaultToToken());
     const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
@@ -35,27 +38,42 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
     const [fromAmount, setFromAmount] = useFloat(0, 30);
     const [toAmount, setToAmount] = useFloat(0, 30);
     const [slippage, setSlippage] = useFloat(0.5, 30);
-    const [autoTrade, setAutoTrade] = useState(auto);
 
-    useEffect(async () => {
-        setFromToken(getDefaultFromToken());
-        setToToken(getDefaultToToken());
-        updateRouter();
+    useEffect(() => {
+        const updateData = async () => {
+            setFromToken(getDefaultFromToken());
+            setToToken(getDefaultToToken());
+            updateRouter();
+        };
+
+        updateData();
     }, [onSettingsUpdate]);
 
-    useEffect(async () => {
-        setFromDetails(network, fromToken);
-        setFromBalance(await getFormattedTokenBalance(fromToken));
+    useEffect(() => {
+        const updateFromDetails = async () => {
+            setFromDetails(network, fromToken);
+            setFromBalance(await getFormattedTokenBalance(fromToken));
+        };
+
+        updateFromDetails();
     }, [fromToken]);
 
-    useEffect(async () => {
-        setToDetails(network, toToken);
-        setToBalance(await getFormattedTokenBalance(toToken));
+    useEffect(() => {
+        const updateToDetails = async () => {
+            setToDetails(network, toToken);
+            setToBalance(await getFormattedTokenBalance(toToken));
+        };
+
+        updateToDetails();
     }, [toToken]);
 
-    useEffect(async () => {
-        setFromBalance(await getFormattedTokenBalance(fromToken));
-        setToBalance(await getFormattedTokenBalance(toToken));
+    useEffect(() => {
+        const updateBalance = async () => {
+            setFromBalance(await getFormattedTokenBalance(fromToken));
+            setToBalance(await getFormattedTokenBalance(toToken));
+        };
+
+        updateBalance();
     }, [connected]);
 
     useEffect(() => {
@@ -79,14 +97,8 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
 
     const handleSubmit = async e => {
         e.preventDefault();
+        if (auto) return autoTrade(slippage);
 
-        // amountIn,
-        // tokenIn,
-        // tokenOut,
-        // slippage,
-        // gasPrice,
-        // gasLimit,
-        // deadline
         swapExactTokensForTokensSupportingFeeOnTransferTokens(
             fromAmount,
             fromToken,
@@ -128,9 +140,9 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                     balance={fromBalance}
                     tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
                 />
-                <TokenInput onInputChange={setFromAmount} value={fromAmount} />
-                <SwitchContainer>
-                    <StyledMdSwapHoriz onClick={handleSwitch} />
+                <TokenInput onInputChange={setFromAmount} value={fromAmount} auto={auto} />
+                <SwitchContainer isDisabled={auto}>
+                    <StyledMdSwapHoriz onClick={handleSwitch}/>
                 </SwitchContainer>
 
                 <TokenBalance
@@ -138,9 +150,26 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                     balance={toBalance}
                     tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
                 />
-                <TokenInput onInputChange={setToAmount} value={toAmount} />
-                <SwapButton connected={connected} disabled={!connected || fromAmount <= 0}>
-                    {connected ? 'Swap' : 'Not Connected'}
+                <TokenInput onInputChange={setToAmount} value={toAmount} auto={auto} />
+                <SwapButton
+                    connected={connected}
+                    disabled={
+                        !connected ||
+                        (fromAmount <= 0 && !auto) ||
+                        fromToken == toToken ||
+                        fromToken == 'Error' ||
+                        toToken == 'Error'
+                    }
+                >
+                    {connected
+                        ? fromToken == toToken || fromToken == 'Error' || toToken == 'Error'
+                            ? 'Something went wrong, refresh page...'
+                            : auto
+                            ? 'Start Bot'
+                            : fromAmount <= 0
+                            ? 'Amount is less than 0'
+                            : 'Swap'
+                        : 'Not Connected'}
                 </SwapButton>
                 <TradeDetails
                     fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
@@ -187,6 +216,7 @@ const TradeButtons = styled.div`
     gap: 5px;
 `;
 const SwapButton = styled.button`
+
     padding: 5px 10px 5px 10px;
     width: 100%;
 
@@ -199,10 +229,6 @@ const SwapButton = styled.button`
 
     &:hover {
         background-color: ${({ connected }) => (connected ? 'hsl(184, 100%, 60%)' : 'gray')};
-    }
-
-    &:disabled {
-        background-color: lightgray;
     }
 
     cursor: pointer;
@@ -224,7 +250,7 @@ const StyledMdSwapHoriz = styled(MdSwapHoriz)`
 `;
 
 const SwitchContainer = styled.div`
-    display: flex;
+   display: ${({ isDisabled }) => (isDisabled ? 'none' : 'flex')};
     justify-content: center;
     align-items: center;
     padding: 10px;
