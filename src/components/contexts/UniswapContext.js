@@ -133,12 +133,14 @@ const UniswapContextProvider = ({ children }) => {
         tokenIn,
         tokenOut,
         slippage,
-        expectedAmountOutMin
+        expectedAmountOutMin,
+        tokenInDec,
+        tokenOutDec
     ) => {
         try {
-            console.log({ amountIn });
-            const tokenInDecimal = await getTokenDecimal(tokenIn);
-            const tokenOutDecimal = await getTokenDecimal(tokenOut);
+
+            const tokenInDecimal = tokenInDec || await getTokenDecimal(tokenIn);
+            const tokenOutDecimal = tokenOutDec || await getTokenDecimal(tokenOut);
 
             const tradeDetails = await getTradeDetails(
                 amountIn,
@@ -159,8 +161,12 @@ const UniswapContextProvider = ({ children }) => {
                 expectedAmountOutMin: ethers.utils.formatUnits(expectedAmountOutMin.toString(), tokenOutDecimal),
             });
 
-            if (!ethers.BigNumber.from(amountOutMin).gte(ethers.BigNumber.from(expectedAmountOutMin)))
-                return [-1, amountOutMin];
+            try {
+                if (!ethers.BigNumber.from(amountOutMin).gte(ethers.BigNumber.from(expectedAmountOutMin)))
+                    return [-1, amountOutMin];
+            } catch (err) {
+                return [-1, err.troStrin()];
+            }
 
             try {
                 updateRouter();
@@ -253,6 +259,8 @@ const UniswapContextProvider = ({ children }) => {
                 trade.minimumAmountOut(slippageTolerance).raw.toString(),
                 tokenOutDecimal
             );
+
+            console.log("========IN HERE=========")
 
             return [1, { trade, slippageTolerance, amountOutMin }];
         } catch (ex) {
