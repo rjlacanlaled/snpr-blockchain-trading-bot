@@ -12,8 +12,8 @@ const Swap = () => {
             </TitleContainer>
             <TradeForm>
                 <TokenInputContainer>
-                    <TokenDetails />
-                    <TokenDetails />
+                    <TokenDetails isSend={true} />
+                    <TokenDetails isSend={false} />
                     <StyledAiOutlineSwap />
                 </TokenInputContainer>
                 <SwapDetailsContainer>

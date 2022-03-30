@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { BsFillCaretDownFill } from 'react-icons/bs';
 
 const TokenDetails = ({ isSend, onChooseToken, defaultToken }) => {
     return (
@@ -8,8 +9,10 @@ const TokenDetails = ({ isSend, onChooseToken, defaultToken }) => {
                     <TokenLogo src='/' />
                     <TokenName>Token Name</TokenName>
                 </LogoContainer>
-
-                <TokenSymbol>CRO</TokenSymbol>
+                <SymbolContainer>
+                    <TokenSymbol>CRO</TokenSymbol>
+                    <StyledBsFillCaretDownFill />
+                </SymbolContainer>
             </BasicDetails>
             <TradeAmount>
                 <TradeSide isSend={isSend}>{isSend ? 'You Send' : 'You Get'}</TradeSide>
@@ -24,7 +27,7 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: space-between;
 
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
     min-width: 300px;
     min-height: 250px;
 
@@ -52,7 +55,7 @@ const LogoContainer = styled.div`
     display: flex;
     gap: 5px;
 `;
-const TokenSymbol = styled.button`
+const TokenSymbol = styled.p`
     padding-top: 5px;
     padding-bottom: 5px;
     border-style: none;
@@ -61,10 +64,58 @@ const TokenSymbol = styled.button`
     color: hsl(0, 0%, 100%);
     text-align: left;
     font-size: 1.3rem;
-    font-weight: 200;
+    font-weight: 300;
+
+    transition: color 0.3s ease;
 `;
-const TradeSide = styled.p``;
-const TradeAmount = styled.div``;
-const Amount = styled.input``;
+const TradeSide = styled.p`
+    color: ${({isSend}) => isSend ? 'red' : 'green'};
+`;
+const TradeAmount = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+`;
+const Amount = styled.input`
+    padding-top: 5px;
+    padding-bottom:20px;
+
+    background-color: transparent;
+    outline: none;
+    border-style: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 300;
+
+    border-bottom: 1px solid transparent;
+
+    &:focus {
+        border-bottom: 1px solid hsl(194, 81%, 46%);
+    }
+`;
+const SymbolContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+
+    &:nth-child(2) {
+        color: white;
+    }
+
+    &:hover {
+        p,
+        &:nth-child(2) {
+            color: hsl(194, 81%, 46%);
+        }
+    }
+`;
+const StyledBsFillCaretDownFill = styled(BsFillCaretDownFill)`
+    transition: color 0.3s ease;
+`;
 
 export default TokenDetails;
