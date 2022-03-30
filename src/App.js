@@ -1,41 +1,36 @@
 import styled from 'styled-components';
-import BlockchainNetworkProvider from './components/contexts/BlockchainContext';
+import BlockchainProvider from './components/contexts/BlockchainContext';
 import UniswapContextProvider from './components/contexts/UniswapContext';
-import Header from './components/Header';
 import Global from './components/styles/Global';
-import Trade from './pages/Trade';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import TradingBotContextProvider, { TradingBotContext } from './components/contexts/TradingBotContext';
+import Erc20ContextProvider from './components/contexts/Erc20Context';
+import Sidebar from './components/Sidebar';
+import Swap from './pages/Swap';
+import Header from './components/Header';
 
 export default function App() {
     return (
-        <BrowserRouter>
-            <BlockchainNetworkProvider>
-                <UniswapContextProvider>
-                    <Global />
-                    <Header />
-                    <Container>
-                        <TradingBotContextProvider>
+        <Container>
+            <BrowserRouter>
+                <BlockchainProvider>
+                    <Erc20ContextProvider>
+                        <UniswapContextProvider>
+                            <Global />
+                            <Header />
+                            <Sidebar />
                             <Routes>
-                                <Route path='/' element={<Trade auto={false} />} />
-                                <Route path='/order' element={<Trade auto={false} />} />
-                                <Route path='auto' element={<Trade auto={true} />} />
+                                <Route path='/' element={<Swap />} />
                             </Routes>
-                        </TradingBotContextProvider>
-                    </Container>
-                </UniswapContextProvider>
-            </BlockchainNetworkProvider>
-        </BrowserRouter>
+                        </UniswapContextProvider>
+                    </Erc20ContextProvider>
+                </BlockchainProvider>
+            </BrowserRouter>
+        </Container>
     );
 }
 
 const Container = styled.div`
-    display: flex;
-    justify-content: center;
-    width: 100vw;
+    position: absolute;
     min-height: 100vh;
-
-    overflow: auto;
-
-    background-color: #ebf5ff;
+    min-width: 100vw;
 `;

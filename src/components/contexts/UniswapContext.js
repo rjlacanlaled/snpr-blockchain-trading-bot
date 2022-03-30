@@ -11,22 +11,20 @@ const defaultRouter = '0x10ED43C718714eb63d5aA57B78B54704E256024E';
 const defaultGasPrice = ethers.utils.parseUnits('5', 'gwei');
 const defaultGas = ethers.utils.parseUnits('500000', 'wei');
 
-const UniswapContextProvider = ({ children, provider }) => {
+const UniswapContextProvider = ({ children }) => {
     const { getContract, provider } = useBlockchain;
-    const [router, setRouter] = usePersist(defaultRouter);
+    const [router, setRouter] = usePersist('uniswapRouter', defaultRouter);
 
     const getUniswapContract = ({ from, gas = defaultGas, gasPrice = defaultGasPrice }) => {
-        if (!wallet) return;
-
         return getContract(pancakeswapAbi, router, { from, gas, gasPrice });
     };
 
-    const getAmountOutMin = async (amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage) => {
+    const getAmountOutMin = async (wallet, amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage) => {
         try {
             const slippageTolerance = new Percent(Math.floor(slippage * 100).toString(), '10000');
             const tokenA = new Token(ChainId.MAINNET, ethers.utils.getAddress(tokenIn), tokenInDecimal);
             const tokenB = new Token(ChainId.MAINNET, ethers.utils.getAddress(tokenOut), tokenOutDecimal);
-            const pair = await Fetcher.fetchPairData(tokenA, tokenB, network.wallet.connect(network.provider));
+            const pair = await Fetcher.fetchPairData(tokenA, tokenB, wallet.connect(provider));
             const route = new Route([pair], tokenA);
             const trade = new Trade(route, new TokenAmount(tokenA, amountIn), TradeType.EXACT_INPUT);
             const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw.toString();
@@ -43,6 +41,7 @@ const UniswapContextProvider = ({ children, provider }) => {
     const uniswap = {
         getUniswapContract,
         getAmountOutMin,
+        setRouter
     };
 
     return <UniswapContext.Provider value={{ uniswap }}>{children}</UniswapContext.Provider>;

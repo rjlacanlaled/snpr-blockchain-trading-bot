@@ -1,94 +1,58 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useBlockchainNetwork from './hooks/useBlockchain';
-import PageSelection from './PageSelection';
+import { RiSettings4Fill } from 'react-icons/ri';
 
 const Header = () => {
-    const { connect, disconnect, account, balance, connected, canConnect } = useBlockchainNetwork();
-
-    const handleConnectWallet = async () => {
-        if (!canConnect) return;
-        account ? disconnect() : connect();
-    };
-
     return (
-        <Main>
-            <Container>
-                <Title>Snipr</Title>
-                <BalanceContainer connected={connected}>
-                    <ConnectWalletButton onClick={handleConnectWallet} disabled={!canConnect}>
-                        {canConnect ? !account ? 'connect wallet' : `disconnect: 0x...${account.slice(account.length - 4)}` : 'install metamask to connect wallet...'}
-                    </ConnectWalletButton>
-                    <Balance> {connected && `Balance: ${balance} BNB`}</Balance>
-                </BalanceContainer>
-            </Container>
-            <PageSelection />
-        </Main>
+        <Container>
+            <ConnectWalletButton>Connect wallet</ConnectWalletButton>
+            <StyledRiSettings4Fill />
+        </Container>
     );
 };
 
-const Main = styled.div`
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 10;
-
-    background-color: #ffffff;
-`;
-
 const Container = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    min-height: 50px;
+    position: fixed;
+    top: 0;
+    z-index: 5;
     width: 100%;
-    padding: 10px 3px 10px 20px;
 
-    border-bottom: 1px solid lightgray;
-`;
-
-
-const ConnectWalletButton = styled.button`
-    max-height: 30px;
-    padding: 5px 10px 5px 10px;
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    background-color: hsl(184, 75%, 60%);
-
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-        background-color: hsl(184, 100%, 60%);
-    }
-
-    &:disabled {
-        background-color: lightgray;
-    }
-`;
-
-const BalanceContainer = styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     gap: 10px;
-    background-color: ${({ connected }) => (connected ? '#663AAF' : 'transparent')};
+
+    padding-right: 4rem;
+
+    background-color: hsl(216, 41%, 10%, 0.5);
+
+    height: 90px;
+`;
+
+const ConnectWalletButton = styled.button`
+    cursor: pointer;
+    font-weight: 500;
+    padding: 12px 20px 12px 20px;
+    border-radius: 10px 20px 10px 20px;
+    background-color: rgb(23, 169, 214, 0.2);
+    color: hsl(194, 81%, 50%);
+    border-style: none;
+
+    &:hover {
+        border: 1px solid;
+    }
+`;
+
+const StyledRiSettings4Fill = styled(RiSettings4Fill)`
+    cursor: pointer;
+    font-size: 2.2rem;
+    color: rgb(128, 128, 128);
+    background-color: rgb(128, 128, 128, 0.1);
     padding: 5px;
-    border: 1px solid white;
     border-radius: 5px;
-`;
-const Balance = styled.p`
-    font-size: 0.9rem;
-    color: white;
-    font-weight: 900;
-`;
-const Title = styled.p`
-    font-weight: 900;
-    font-size: 1.2rem;
+
+    &:hover {
+        background-color: rgb(0, 0, 0, 0.4);
+    }
 `;
 
 export default Header;

@@ -8,15 +8,23 @@ const Global = createGlobalStyle`
         padding: 0;
 
         font-family: 'Roboto', sans-serif;
-        color: #280E5F;
-
         text-decoration: none;
 
     }
 
     body {
-        height: 100vh;
-        width: 100vw;
+        min-height: 100vh;
+        min-width: 100vw;
+
+        background-color: hsl(0, 20%, 3%);
+
+        background-image: url('assets/background.webp');
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        li {
+            list-style: none;
+        }
     }
 
 `;
