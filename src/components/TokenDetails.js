@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 
-const TokenDetails = ({ isSend }) => {
+const TokenDetails = ({ isSend, logo }) => {
     return (
         <Container>
             <BasicDetails>
                 <LogoContainer>
-                    <TokenLogo src='/' />
+                    <TokenLogo src={logo || '/assets/binance-logo.svg'} />
                     <TokenName>Token Name</TokenName>
                 </LogoContainer>
                 <SymbolContainer>
@@ -47,7 +47,10 @@ const BasicDetails = styled.div`
 
     border-bottom: 0.1px solid rgb(180, 180, 180, 0.4);
 `;
-const TokenLogo = styled.img``;
+const TokenLogo = styled.img`
+    height: 20px;
+    width: 20px;
+`;
 const TokenName = styled.p`
     color: gray;
 `;
@@ -69,7 +72,7 @@ const TokenSymbol = styled.p`
     transition: color 0.3s ease;
 `;
 const TradeSide = styled.p`
-    color: ${({isSend}) => isSend ? 'orange' : 'green'};
+    color: ${({ isSend }) => (isSend ? 'orange' : 'green')};
 `;
 const TradeAmount = styled.div`
     display: flex;
@@ -81,7 +84,7 @@ const TradeAmount = styled.div`
 `;
 const Amount = styled.input`
     padding-top: 5px;
-    padding-bottom:20px;
+    padding-bottom: 20px;
 
     background-color: transparent;
     outline: none;
