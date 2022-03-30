@@ -1,26 +1,30 @@
 import styled from 'styled-components';
 import { RiSettings4Fill } from 'react-icons/ri';
+import { GiHamburgerMenu } from 'react-icons/gi';
 
-const Header = () => {
+const Header = ({ toggle, sidebarVisible }) => {
+
     return (
         <Container>
-            <ConnectWalletButton>Connect wallet</ConnectWalletButton>
-            <StyledRiSettings4Fill />
+            <StyledGiHamburgerMenu onClick={() => toggle(true)} visible={sidebarVisible ? '1' : undefined}/>
+            <MainOptionsContainer>
+                <ConnectWalletButton>Connect wallet</ConnectWalletButton>
+                <StyledRiSettings4Fill />
+            </MainOptionsContainer>
         </Container>
     );
 };
 
 const Container = styled.div`
-    position: fixed;
-    top: 0;
     z-index: 5;
     width: 100%;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
 
+    padding-left: 4rem;
     padding-right: 4rem;
 
     background-color: hsl(216, 41%, 10%, 0.5);
@@ -52,6 +56,24 @@ const StyledRiSettings4Fill = styled(RiSettings4Fill)`
 
     &:hover {
         background-color: rgb(0, 0, 0, 0.4);
+    }
+`;
+
+const MainOptionsContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+`;
+
+const StyledGiHamburgerMenu = styled(GiHamburgerMenu)`
+    visibility: ${({visible}) => visible ? 'hidden' : 'visible'};
+    cursor: pointer;
+    color: gray;
+    font-size: 1.8rem;
+
+    &:hover {
+       color: hsl(194, 81%, 50%);
     }
 `;
 

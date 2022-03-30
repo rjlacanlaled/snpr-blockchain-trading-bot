@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { GiLaserGun } from 'react-icons/gi';
 import { FaExchangeAlt } from 'react-icons/fa';
-import { RiExchangeDollarFill, RiRobotLine } from 'react-icons/ri';
-import { AiOutlineLineChart, AiOutlineRobot } from 'react-icons/ai';
+import { AiOutlineLineChart, AiOutlineRobot, AiOutlineClose } from 'react-icons/ai';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Sidebar = () => {
+const Sidebar = ({ show, toggle}) => {
     const location = useLocation();
     const [active, setActive] = useState(location.pathname);
+    const [isMinimized, setIsMinimized] = useState(false);
+
+    const handleResize = e => {
+        setIsMinimized(document.body.clientWidth <= 1028);
+    };
 
     useEffect(() => {
         console.log(location.pathname);
@@ -16,15 +20,25 @@ const Sidebar = () => {
         console.log(active);
     }, [location]);
 
+    useEffect(() => {
+        setIsMinimized(document.body.clientWidth <= 1028);
+        window.addEventListener('resize', handleResize);
+        console.log(isMinimized);
+        return () => window.removeEventListener(handleResize);
+    }, []);
+
     return (
-        <Container>
-            <LogoContainer>
-                <StyledGiLaserGun />
-                <TextContainer>
-                    <CryptoText>CRYPTO</CryptoText>
-                    <SniprText>snpr</SniprText>
-                </TextContainer>
-            </LogoContainer>
+        <Container show={show} minimized={isMinimized ? '1' : undefined}>
+            <LogoButtonContainer>
+                <LogoContainer>
+                    <StyledGiLaserGun />
+                    <TextContainer>
+                        <CryptoText>CRYPTO</CryptoText>
+                        <SniprText>snpr</SniprText>
+                    </TextContainer>
+                </LogoContainer>
+                <StyledAiOutlineClose minimized={isMinimized ? '1' : undefined} onClick={() => toggle(false)}/>
+            </LogoButtonContainer>
             <LinksContainer>
                 <LinkItem active={active} key='/' path='/'>
                     <StyledLink to='/'>
@@ -50,7 +64,7 @@ const Sidebar = () => {
 };
 
 const Container = styled.div`
-    display: flex;
+    display: ${({ show, minimized }) => (show || !minimized ? 'flex' : 'none')};
     flex-direction: column;
     position: fixed;
     left: 0;
@@ -87,6 +101,12 @@ const SniprText = styled.p`
 
 const LinksContainer = styled.ul`
     padding: 10px;
+`;
+
+const LogoButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 const LinkItem = styled.li`
     margin-bottom: 10px;
@@ -135,5 +155,18 @@ const StyledGiLaserGun = styled(GiLaserGun)`
 const StyledFaExchangeAlt = styled(FaExchangeAlt)``;
 const StyledAiOutlineRobot = styled(AiOutlineRobot)``;
 const StyledAiOutlineLineChart = styled(AiOutlineLineChart)``;
+const StyledAiOutlineClose = styled(AiOutlineClose)`
+    cursor: pointer;
+    padding: 8px;
+    font-size: 2rem;
+    border-radius: 20px;
+    border: 1px solid rgb(180, 180, 180, 0.3);
+    display: ${({ minimized }) => (minimized ? 'block' : 'none')};
+    opacity: 0.5;
+
+    &:hover {
+        opacity: 1;
+    }
+`;
 
 export default Sidebar;

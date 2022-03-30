@@ -23,14 +23,19 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-radius: 15px;
-    border: 0.1px solid rgb(180, 180, 180, 0.4);
 
     padding: 20px;
     min-width: 300px;
     min-height: 250px;
 
+    border-radius: 15px;
+    border: 0.1px solid rgb(180, 180, 180, 0.4);
+
     background-color: hsl(216, 41%, 5%, 0.7);
+
+    @media (max-width: 760px) {
+        min-width: 100%;
+    }
 `;
 const BasicDetails = styled.div`
     display: flex;
@@ -51,7 +56,7 @@ const TokenSymbol = styled.button`
     padding-top: 5px;
     padding-bottom: 5px;
     border-style: none;
-    
+
     background-color: transparent;
     color: hsl(0, 0%, 100%);
     text-align: left;

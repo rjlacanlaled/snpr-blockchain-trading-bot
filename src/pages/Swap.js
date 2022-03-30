@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import TokenDetails from '../components/TokenDetails';
 import { AiOutlineSwap } from 'react-icons/ai';
+import { useEffect } from 'react';
 
 const Swap = () => {
     return (
@@ -9,11 +10,17 @@ const Swap = () => {
                 <MainTitle>Exchange Tokens Instantly</MainTitle>
                 <SubTitle>Select tokens to swap</SubTitle>
             </TitleContainer>
-            <TokenInputContainer>
-                <TokenDetails />
-                <TokenDetails />
-                <StyledAiOutlineSwap />
-            </TokenInputContainer>
+            <TradeForm>
+                <TokenInputContainer>
+                    <TokenDetails />
+                    <TokenDetails />
+                    <StyledAiOutlineSwap />
+                </TokenInputContainer>
+                <SwapDetailsContainer>
+                    <Details></Details>
+                    <SwapButton>Swap</SwapButton>
+                </SwapDetailsContainer>
+            </TradeForm>
         </Container>
     );
 };
@@ -24,13 +31,21 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 90px;
+    padding-top: 140px;
     padding-left: 250px;
 
     gap: 80px;
 
-    height: 100vh;
-    width: 100vw;
+    min-height: 100vh;
+    min-width: 100vw;
+
+    overflow: auto;
+
+    @media (max-width: 1020px) {
+        justify-content: flex-start;
+        padding-left: 0px;
+
+    }
 `;
 
 const TitleContainer = styled.div`
@@ -38,12 +53,18 @@ const TitleContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 30px;
+
+
 `;
 const MainTitle = styled.h1`
     color: hsl(0, 0%, 90%);
     font-size: 4rem;
     font-weight: 400;
     text-align: center;
+
+    @media (max-width: 760px) {
+        font-size: 2rem;
+    }
 `;
 
 const SubTitle = styled.h2`
@@ -59,6 +80,11 @@ const TokenInputContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 20px;
+
+    @media (max-width: 760px) {
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const StyledAiOutlineSwap = styled(AiOutlineSwap)`
@@ -78,7 +104,48 @@ const StyledAiOutlineSwap = styled(AiOutlineSwap)`
     background-color: hsl(194, 81%, 30%);
 
     &:hover {
-        background-color: hsl(194, 81%, 60%)
+        background-color: hsl(194, 81%, 60%);
+    }
+`;
+
+const TradeForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    @media (max-width: 760px) {
+        flex-direction: column;
+        width: 100%;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+`;
+
+const SwapDetailsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+
+    border-radius: 15px;
+    border: 0.1px solid rgb(180, 180, 180, 0.4);
+
+    background-color: hsl(216, 41%, 5%, 0.7);
+    padding: 15px;
+`;
+const Details = styled.div``;
+const SwapButton = styled.button`
+    cursor: pointer;
+    padding: 15px 30px 15px 30px;
+    font-size: 1.1rem;
+
+    border-radius: 10px;
+    background-color: rgb(23, 169, 214, 0.2);
+    color: hsl(194, 81%, 50%);
+    border-style: none;
+
+    &:hover {
+        background-color: rgb(23, 169, 214, 0.5);
+        color: hsl(194, 81%, 60%);
     }
 `;
 
