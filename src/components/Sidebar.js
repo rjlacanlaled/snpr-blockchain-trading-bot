@@ -5,7 +5,7 @@ import { AiOutlineLineChart, AiOutlineRobot, AiOutlineClose } from 'react-icons/
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Sidebar = ({ show, toggle}) => {
+const Sidebar = ({ show, toggle }) => {
     const location = useLocation();
     const [active, setActive] = useState(location.pathname);
     const [isMinimized, setIsMinimized] = useState(false);
@@ -34,7 +34,7 @@ const Sidebar = ({ show, toggle}) => {
                         <SniprText>snpr</SniprText>
                     </TextContainer>
                 </LogoContainer>
-                <StyledAiOutlineClose minimized={isMinimized ? '1' : undefined} onClick={() => toggle(false)}/>
+                <StyledAiOutlineClose minimized={isMinimized ? '1' : undefined} onClick={() => toggle(false)} />
             </LogoButtonContainer>
             <LinksContainer>
                 <LinkItem active={active} key='/' path='/'>
@@ -52,6 +52,12 @@ const Sidebar = ({ show, toggle}) => {
                 <LinkItem active={active} key='/limit' path='/limit'>
                     <StyledLink to='limit'>
                         <Label>Limit Order</Label>
+                        <StyledAiOutlineLineChart />
+                    </StyledLink>
+                </LinkItem>
+                <LinkItem active={active} key='/graphql' path='/graphql'>
+                    <StyledLink to='graphql'>
+                        <Label>Graphql Test</Label>
                         <StyledAiOutlineLineChart />
                     </StyledLink>
                 </LinkItem>
@@ -160,6 +166,7 @@ const StyledAiOutlineClose = styled(AiOutlineClose)`
     border: 1px solid rgb(180, 180, 180, 0.3);
     display: ${({ minimized }) => (minimized ? 'block' : 'none')};
     opacity: 0.5;
+    color: white;
 
     &:hover {
         opacity: 1;

@@ -2,11 +2,15 @@ import styled from 'styled-components';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import useFloat from './hooks/useFloat';
 import { useState } from 'react';
+import { Modal } from './styles/Modal.styled';
+import TokenSelect from './TokenSelect';
 
 const TokenDetails = ({ isSend, logo }) => {
     const [amount, setAmount] = useFloat('', 30);
     const [tokenSymbol, setTokenSymbol] = useState('');
     const [tokenName, setTokenName] = useState('');
+    
+    const [showSelectToken, setShowSelectToken] = useState(false);
 
     return (
         <Container>
@@ -15,7 +19,7 @@ const TokenDetails = ({ isSend, logo }) => {
                     <TokenLogo src={logo || '/assets/binance-logo.svg'} />
                     <TokenName>{tokenName || 'Select a token'}</TokenName>
                 </LogoContainer>
-                <SymbolContainer>
+                <SymbolContainer onClick={() => setShowSelectToken(true)}>
                     <TokenSymbol>{tokenSymbol || isSend ? 'BNB' : 'Select a token'}</TokenSymbol>
                     <StyledBsFillCaretDownFill />
                 </SymbolContainer>
@@ -24,6 +28,10 @@ const TokenDetails = ({ isSend, logo }) => {
                 <TradeSide isSend={isSend}>{isSend ? 'You Send' : 'You Get'}</TradeSide>
                 <Amount placeholder='0.0' value={amount} onChange={e => setAmount(e.target.value)}></Amount>
             </TradeAmount>
+            <Modal show={showSelectToken}>
+                <TokenSelect onFinish={setShowSelectToken} />
+            </Modal>
+
         </Container>
     );
 };

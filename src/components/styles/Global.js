@@ -25,7 +25,15 @@ const Global = createGlobalStyle`
         li {
             list-style: none;
         }
+
+        a {
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     }
+
+
 
 `;
 
