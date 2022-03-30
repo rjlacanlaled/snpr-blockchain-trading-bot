@@ -72,12 +72,25 @@ const UniswapContextProvider = ({ children }) => {
         });
     };
 
-    const swapExactTokensForTokensSupportingFeeOnTransferTokens = async (amountIn, tokenIn, tokenOut, slippage) => {
-        const tokenInDecimal = await getTokenDecimal(tokenIn);
-        const tokenOutDecimal = await getTokenDecimal(tokenOut);
+    const swapExactTokensForTokensSupportingFeeOnTransferTokens = async (
+        amountIn,
+        tokenIn,
+        tokenOut,
+        slippage,
+        tokenInDec,
+        tokenOutDec
+    ) => {
+
+        console.log({tokenInDec, tokenOutDec})
+        const tokenInDecimal = tokenInDec || await getTokenDecimal(tokenIn);
+        const tokenOutDecimal = tokenOutDec || await getTokenDecimal(tokenOut);
+
+        console.log({ amountIn, tokenIn, tokenOut, slippage, tokenInDec, tokenOutDec });
+
+        const parsedAmountIn = ethers.utils.parseUnits(amountIn, tokenInDecimal);
 
         const tradeDetails = await getTradeDetails(
-            amountIn,
+            parsedAmountIn,
             tokenIn,
             tokenInDecimal,
             tokenOut,
@@ -88,19 +101,26 @@ const UniswapContextProvider = ({ children }) => {
         if (tradeDetails[0] < 1) return false;
 
         const { trade, slippageTolerance } = tradeDetails[1];
+
+        console.log(trade);
         const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw.toString();
 
+        console.log(amountOutMin);
+
         try {
-            updateRouter();
             const tx = await router.methods.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                amountIn,
+                parsedAmountIn,
                 amountOutMin,
                 [tokenIn, tokenOut],
                 process.env.REACT_APP_WALLET_ADDRESS,
                 parseFloat('1000000') * 60000
             );
 
+     
+
             const gas = await tx.estimateGas();
+
+           
 
             const transactionRouter = getTransactionRouter();
 
@@ -110,8 +130,9 @@ const UniswapContextProvider = ({ children }) => {
                 'wei'
             );
 
+            
             const executeTx = await transactionRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                amountIn,
+                parsedAmountIn,
                 amountOutMin,
                 [tokenIn, tokenOut],
                 process.env.REACT_APP_WALLET_ADDRESS,
@@ -122,8 +143,11 @@ const UniswapContextProvider = ({ children }) => {
                 }
             );
 
+            console.log(executeTx);
+
             return [1, executeTx];
         } catch (err) {
+            console.log(err);
             return [-1, err.toString()];
         }
     };
@@ -138,9 +162,8 @@ const UniswapContextProvider = ({ children }) => {
         tokenOutDec
     ) => {
         try {
-
-            const tokenInDecimal = tokenInDec || await getTokenDecimal(tokenIn);
-            const tokenOutDecimal = tokenOutDec || await getTokenDecimal(tokenOut);
+            const tokenInDecimal = tokenInDec || (await getTokenDecimal(tokenIn));
+            const tokenOutDecimal = tokenOutDec || (await getTokenDecimal(tokenOut));
 
             const tradeDetails = await getTradeDetails(
                 amountIn,
@@ -241,10 +264,6 @@ const UniswapContextProvider = ({ children }) => {
     };
 
     const getTradeDetails = async (amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage) => {
-        console.log({ amountIn, tokenIn, tokenInDecimal, tokenOut, tokenOutDecimal, slippage });
-
-        console.log(ethers.utils.formatUnits(amountIn, tokenInDecimal));
-
         try {
             const slippageTolerance = new Percent(Math.floor(slippage * 100).toString(), '10000');
 
@@ -260,7 +279,7 @@ const UniswapContextProvider = ({ children }) => {
                 tokenOutDecimal
             );
 
-            console.log("========IN HERE=========")
+            console.log('========IN HERE=========');
 
             return [1, { trade, slippageTolerance, amountOutMin }];
         } catch (ex) {

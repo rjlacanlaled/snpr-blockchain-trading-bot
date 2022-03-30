@@ -16,8 +16,8 @@ import { MdSwapHoriz } from 'react-icons/md';
 import useFloat from './hooks/useFloat';
 import useTradingBot from './hooks/useTradingBot';
 
-const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
-    const { network, connected, getFormattedTokenBalance } = useBlockchainNetwork();
+const TradeForm = ({ onSettingsClick, onSettingsUpdate }) => {
+    const { network, connected, getFormattedTokenBalance, getTokenDecimal } = useBlockchainNetwork();
     const {
         swapExactTokensForTokens,
         swapExactTokensForTokensSupportingFeeOnTransferTokens,
@@ -26,112 +26,20 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
         updateRouter,
     } = useUniswap();
 
-    const { initAutoTrade, isRunning } = useTradingBot();
-    const [fromToken, setFromToken] = useState(getDefaultFromToken());
-    const [toToken, setToToken] = useState(getDefaultToToken());
-    const [fromDetails, setFromDetails] = useTokenDetails(network, fromToken);
-    const [toDetails, setToDetails] = useTokenDetails(network, toToken);
-    const [fromBalance, setFromBalance] = useState(0);
-    const [toBalance, setToBalance] = useState(0);
+    const [fromToken, setFromToken] = usePersist(JSON.parse(localStorage.getItem('defaultBuyToken')));
+    const [toToken, setToToken] = usePersist(JSON.parse(localStorage.getItem('defaultToToken')));
+    const [slippage, setSlippage] = usePersist('tradeSlippage', '0.5');
+
     const [search, setSearch] = useState('');
-    const [isBuying, setIsBuying] = useState(true);
-    const [fromAmount, setFromAmount] = useFloat(0, 30);
-    const [toAmount, setToAmount] = useFloat(0, 30);
-    const [slippage, setSlippage] = useFloat(0.5, 30);
+    const [toAmount, setToAmount] = useState(0.0);
+    const [fromAmount, setFromAmount] = useState(0.0);
 
-    const [previousToken, setPreviousToken] = usePersist('previousTokenForAutoTrade');
-    const [previousAmount, setPreviousAmount] = usePersist('previousAmountForBot');
-
-    useEffect(() => {
-        const updateData = async () => {
-            setFromToken(getDefaultFromToken());
-            setToToken(getDefaultToToken());
-            updateRouter();
-        };
-
-        updateData();
-    }, [onSettingsUpdate]);
-
-    useEffect(() => {
-        const updateFromDetails = async () => {
-            setFromDetails(network, fromToken);
-            setFromBalance(await getFormattedTokenBalance(fromToken));
-        };
-
-        updateFromDetails();
-    }, [fromToken]);
-
-    useEffect(() => {
-        const updateToDetails = async () => {
-            setToDetails(network, toToken);
-            setToBalance(await getFormattedTokenBalance(toToken));
-        };
-
-        updateToDetails();
-    }, [toToken]);
-
-    useEffect(() => {
-        const updateBalance = async () => {
-            setFromBalance(await getFormattedTokenBalance(fromToken));
-            setToBalance(await getFormattedTokenBalance(toToken));
-        };
-
-        updateBalance();
-    }, [connected]);
-
-    useEffect(() => {
-        if (isBuying) {
-            setFromToken(getDefaultFromToken());
-            setToToken(search);
-        } else {
-            setToToken(getDefaultFromToken());
-            setFromToken(search);
-        }
-    }, [search]);
-
-    useEffect(() => {
-        setFromToken(toToken);
-        setToToken(fromToken);
-    }, [isBuying]);
-
-    const handleSearchChange = e => {
-        setSearch(e.target.value);
-    };
-
-    const handleSubmit = async e => {
+    const handleSearchChange = e => {};
+    const handleSubmit = e => {
         e.preventDefault();
-        //token1, token2, slippage, previousToken, previousAmount, profitRate
-        if (auto) {
-            if (!slippage || !previousToken || !previousAmount) return;
-
-            return initAutoTrade(
-                JSON.parse(localStorage.getItem('token1address')),
-                JSON.parse(localStorage.getItem('token2address')),
-                slippage,
-                previousToken,
-                previousAmount,
-                JSON.parse(localStorage.getItem('profitPercentage'))    
-            );
-        } else {
-            swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                fromAmount,
-                fromToken,
-                toToken,
-                slippage,
-                JSON.parse(localStorage.getItem('gasFee')),
-                JSON.parse(localStorage.getItem('gasLimit')),
-                5
-            );
-        }
     };
-
-    const handleSwitch = () => {
-        setIsBuying(!isBuying);
-    };
-
-    const handleSettings = () => {
-        onSettingsClick(true);
-    };
+    const handleSwitch = () => {};
+    const handleSettings = () => {};
 
     return (
         <Container>
@@ -151,63 +59,16 @@ const TradeForm = ({ onSettingsClick, onSettingsUpdate, auto = false }) => {
                 />
                 <SwapSlippage slippage={slippage} onInputChange={setSlippage} />
 
-                <TokenBalance
-                    token={fromDetails && fromDetails[0] && fromDetails[1].name}
-                    balance={fromBalance}
-                    tokenSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
-                />
-                <TokenInput onInputChange={setFromAmount} value={fromAmount} auto={auto} />
-                <SwitchContainer isDisabled={auto}>
+                <TokenBalance token={fromToken} />
+                <TokenInput onInputChange={setFromAmount} value={fromAmount} />
+                <SwitchContainer>
                     <StyledMdSwapHoriz onClick={handleSwitch} />
                 </SwitchContainer>
-
-                <TokenBalance
-                    token={toDetails && toDetails[0] && toDetails[1].name}
-                    balance={toBalance}
-                    tokenSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
-                />
-                <TokenInput onInputChange={setToAmount} value={toAmount} auto={auto} />
-
+                <TokenBalance token={toToken} />
+                <TokenInput onInputChange={setToAmount} value={toAmount} />
                 <Label htmlFor='previousTokenAddress'>Previous Token Address</Label>
-                <Input
-                    id='previousTokenAddress'
-                    value={previousToken}
-                    onChange={e => setPreviousToken(e.target.value)}
-                />
-                <Label htmlFor='previousTokenAmount'>Previous Token Amount</Label>
-                <Input
-                    id='previousTokenAmount'
-                    value={previousAmount}
-                    onChange={e => setPreviousAmount(e.target.value)}
-                />
-
-                <SwapButton
-                    connected={connected}
-                    disabled={
-                        !connected ||
-                        (fromAmount <= 0 && !auto) ||
-                        fromToken == toToken ||
-                        fromToken == 'Error' ||
-                        toToken == 'Error'
-                    }
-                >
-                    {connected
-                        ? fromToken == toToken || fromToken == 'Error' || toToken == 'Error'
-                            ? 'Something went wrong, refresh page...'
-                            : auto
-                            ? isRunning
-                                ? 'Bot is running, click to stop'
-                                : 'Start Bot'
-                            : fromAmount <= 0
-                            ? 'Amount is less than 0'
-                            : 'Swap'
-                        : 'Not Connected'}
-                </SwapButton>
-                <TradeDetails
-                    fromSymbol={fromDetails && fromDetails[0] && fromDetails[1].symbol}
-                    toSymbol={toDetails && toDetails[0] && toDetails[1].symbol}
-                    price={toDetails && toDetails[0] && toDetails[1].price}
-                />
+                <SwapButton>Swap</SwapButton>
+                <TradeDetails fromToken={fromToken} fromAmount={fromAmount} toToken={toToken} />
             </Form>
         </Container>
     );

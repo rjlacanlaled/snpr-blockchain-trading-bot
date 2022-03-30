@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import BlockchainNetworkProvider from './components/contexts/BlockchainNetworkContext';
+import BlockchainNetworkProvider from './components/contexts/BlockchainContext';
 import UniswapContextProvider from './components/contexts/UniswapContext';
 import Header from './components/Header';
 import Global from './components/styles/Global';

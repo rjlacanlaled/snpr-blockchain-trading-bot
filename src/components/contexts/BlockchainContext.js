@@ -1,28 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { createContext } from 'react';
 import Web3 from 'web3';
 import Eth from 'web3-eth';
 import erc20Abi from '../../data/erc-20-abi.json';
 import { ethers } from 'ethers';
+import usePersist from '../hooks/usePersist';
+import { BlockChainNames } from '../../enums/blockchainNames';
 
-export const BlockchainNetworkContext = createContext();
-const defaultProvider = 'wss://speedy-nodes-nyc.moralis.io/f21c061f796d5011345dd3cd/bsc/mainnet/ws';
+export const BlockchainContext = createContext();
 
-const BlockchainNetworkProvider = ({ children }) => {
+const providers = ['wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/'];
+
+const updateNetwork = (
+    network,
+    {
+        payload: {
+            chainName = BlockChainNames.BSC,
+            provider = 'wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/',
+            wallet = process.env.REACT_APP_WALLET_ADDRESS,
+        },
+    }
+) => {
+    network.chainName = chainName;
+    network.provider = provider;
+    network.wallet = wallet;
+};
+
+const BlockchainProvider = ({ children }) => {
     const [eth, setEth] = useState(window.ethereum);
-    const [account, setAccount] = useState();
-    const [balance, setBalance] = useState(0);
-    const [connected, setConnected] = useState(false);
-    const [canConnect, setCanConnect] = useState(true);
+    const [account, setAccount] = usePersist('currentAccount');
+    const [balance, setBalance] = usePersist('currentBalance');
+    const [connected, setConnected] = usePersist('connectedToApp', false);
+    const [canConnect, setCanConnect] = useState('canConnectToApp', true);
+    const [network, dispatchNetwork] = useReducer(updateNetwork, {});
 
-    const [network, setNetwork] = useState({
-        blockchain: 'binance',
-        getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
-        web3: new Web3(defaultProvider),
-        eth: new Eth(defaultProvider),
-        provider: new ethers.providers.WebSocketProvider(defaultProvider),
-        wallet: ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC),
-    });
+    // const [network, setNetwork] = useState({
+    //     blockchain: 'binance',
+    //     getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
+    //     web3: new Web3(defaultProvider),
+    //     eth: new Eth(defaultProvider),
+    //     provider: new ethers.providers.WebSocketProvider(defaultProvider),
+    //     wallet: ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC),
+    // });
 
     const handleAccountChange = async () => {
         setAccount(eth.selectedAddress);
@@ -117,7 +136,7 @@ const BlockchainNetworkProvider = ({ children }) => {
     };
 
     return (
-        <BlockchainNetworkContext.Provider
+        <BlockchainContext.Provider
             value={{
                 network,
                 eth,
@@ -134,7 +153,7 @@ const BlockchainNetworkProvider = ({ children }) => {
             }}
         >
             {children}
-        </BlockchainNetworkContext.Provider>
+        </BlockchainContext.Provider>
     );
 };
 

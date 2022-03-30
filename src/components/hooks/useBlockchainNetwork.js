@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { BlockchainNetworkContext } from '../contexts/BlockchainNetworkContext';
+import { BlockchainContext } from '../contexts/BlockchainContext';
 
 const useBlockchainNetwork = () => {
-    return useContext(BlockchainNetworkContext);
+    return useContext(BlockchainContext);
 }
 
 export default useBlockchainNetwork;

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const TokenBalance = ({ token, balance, tokenSymbol }) => {
+
+const TokenBalance = ({ token }) => {
+
     return (
         <Container>
             <Token>{token || 'Select a token'}</Token>
