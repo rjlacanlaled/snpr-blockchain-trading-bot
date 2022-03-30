@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GiLaserGun } from 'react-icons/gi';
 import { FaExchangeAlt } from 'react-icons/fa';
 import { RiExchangeDollarFill, RiRobotLine } from 'react-icons/ri';
+import { AiOutlineLineChart, AiOutlineRobot } from 'react-icons/ai';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -28,7 +29,13 @@ const Sidebar = () => {
                 <LinkItem key='/auto'>
                     <StyledLink active={active} to='auto'>
                         <Label>Auto Trade</Label>
-                        <StyledRiRiRobotLine />
+                        <StyledAiOutlineRobot />
+                    </StyledLink>
+                </LinkItem>
+                <LinkItem key='/auto'>
+                    <StyledLink active={active} to='limit'>
+                        <Label>Limit Order</Label>
+                        <StyledAiOutlineLineChart />
                     </StyledLink>
                 </LinkItem>
             </LinksContainer>
@@ -47,7 +54,7 @@ const Container = styled.div`
     min-height: 100vh;
     width: 250px;
     padding: 20px;
-    gap: 50px;
+    gap: 70px;
     z-index: 10;
 
     background-color: hsl(216, 41%, 15%, 0.9);
@@ -72,7 +79,9 @@ const SniprText = styled.p`
     letter-spacing: 5px;
 `;
 
-const LinksContainer = styled.ul``;
+const LinksContainer = styled.ul`
+    padding: 10px;
+`;
 const LinkItem = styled.li`
     margin-bottom: 10px;
     padding: 10px;
@@ -82,14 +91,16 @@ const LinkItem = styled.li`
     color: gray;
     cursor: pointer;
 
-    p, a{
+    p,
+    a {
         color: gray;
     }
 
     &:hover {
         background-color: rgb(128, 128, 128, 0.2);
 
-        p, a {
+        p,
+        a {
             color: hsl(194, 81%, 46%);
         }
     }
@@ -116,6 +127,7 @@ const StyledGiLaserGun = styled(GiLaserGun)`
 `;
 
 const StyledFaExchangeAlt = styled(FaExchangeAlt)``;
-const StyledRiRiRobotLine = styled(RiRobotLine)``;
+const StyledAiOutlineRobot= styled(AiOutlineRobot)``;
+const StyledAiOutlineLineChart = styled(AiOutlineLineChart)``;
 
 export default Sidebar;
