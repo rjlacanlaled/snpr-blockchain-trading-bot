@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import useBlockchainNetwork from './hooks/useBlockchainNetwork';
+import useBlockchainNetwork from './hooks/useBlockchain';
 import usePersist from './hooks/usePersist';
 import useTokenDetails from './hooks/useTokenDetails';
 import useUniswap from './hooks/useUniswap';

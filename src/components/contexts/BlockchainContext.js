@@ -1,30 +1,11 @@
 import { useEffect, useReducer, useState } from 'react';
 import { createContext } from 'react';
 import Web3 from 'web3';
-import Eth from 'web3-eth';
-import erc20Abi from '../../data/erc-20-abi.json';
-import { ethers } from 'ethers';
 import usePersist from '../hooks/usePersist';
-import { BlockChainNames } from '../../enums/blockchainNames';
 
 export const BlockchainContext = createContext();
 
-const providers = ['wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/'];
-
-const updateNetwork = (
-    network,
-    {
-        payload: {
-            chainName = BlockChainNames.BSC,
-            provider = 'wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/',
-            wallet = process.env.REACT_APP_WALLET_ADDRESS,
-        },
-    }
-) => {
-    network.chainName = chainName;
-    network.provider = provider;
-    network.wallet = wallet;
-};
+const defaultProviders = ['wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/'];
 
 const BlockchainProvider = ({ children }) => {
     const [eth, setEth] = useState(window.ethereum);
@@ -32,16 +13,8 @@ const BlockchainProvider = ({ children }) => {
     const [balance, setBalance] = usePersist('currentBalance');
     const [connected, setConnected] = usePersist('connectedToApp', false);
     const [canConnect, setCanConnect] = useState('canConnectToApp', true);
-    const [network, dispatchNetwork] = useReducer(updateNetwork, {});
-
-    // const [network, setNetwork] = useState({
-    //     blockchain: 'binance',
-    //     getFetcherUrl: tokenAddress => `https://api.pancakeswap.info/api/v2/tokens/${tokenAddress}`,
-    //     web3: new Web3(defaultProvider),
-    //     eth: new Eth(defaultProvider),
-    //     provider: new ethers.providers.WebSocketProvider(defaultProvider),
-    //     wallet: ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC),
-    // });
+    const [providers, setProviders] = usePersist('defaultProviders', defaultProviders);
+    const [provider, setProvider] = usePersist('chosenProvider', defaultProviders[0]);
 
     const handleAccountChange = async () => {
         setAccount(eth.selectedAddress);
@@ -62,7 +35,7 @@ const BlockchainProvider = ({ children }) => {
         try {
             await eth.request({ method: 'eth_requestAccounts' });
             setAccount(eth.selectedAddress);
-            setBalance(await getFormattedBalance());
+            setBalance(await getFormattedBalance(eth.selectedAddress));
             setConnected(true);
         } catch (err) {
             console.log(err);
@@ -75,86 +48,45 @@ const BlockchainProvider = ({ children }) => {
         setConnected(false);
     };
 
-    const getFormattedBalance = async () => {
-        return parseFloat(network.web3.utils.fromWei(await getBalance(), 'ether')).toFixed(4);
+    // GET ETH BALANCE
+
+    const getBalance = async address => {
+        return await eth.request({ method: 'eth_getBalance', params: [address] });
     };
 
-    const getBalance = async () => {
-        return await eth.request({ method: 'eth_getBalance', params: [eth.selectedAddress] });
+    const getFormattedBalance = async address => {
+        if (!address) return;
+
+        const web3 = new Web3(provider);
+
+        if (!web3) return;
+
+        return parseFloat(web3.utils.fromWei(await getBalance(address), 'ether')).toFixed(4);
     };
+
+    // GET ETH BALANCE
+
+    // SMART CONTRACT FACTORY
 
     const getContract = (abi, tokenAddress, defaultParams = {}) => {
-        if (!network.web3.utils.isAddress(tokenAddress)) return;
-        return new network.web3.eth.Contract(abi, tokenAddress, defaultParams);
+        const web3 = new Web3(provider);
+        if (!web3 || !web3.utils.isAddress(tokenAddress)) return;
+        return new web3.eth.Contract(abi, tokenAddress, defaultParams);
     };
 
-    const getTokenBalance = async tokenAddress => {
-        if (!network.web3.utils.isAddress(tokenAddress)) return 0;
-        try {
-            const contract = getContract(erc20Abi, tokenAddress);
-            return await contract.methods.balanceOf(eth.selectedAddress).call();
-        } catch (err) {
-            // do nothing
-        }
+    // SMART CONTRACT FACTORY
 
-        return false;
+    const blockchain = {
+        providers,
+        balance,
+        connected,
+        canConnect,
+        connect,
+        disconnect,
+        getContract
     };
 
-    const getFormattedTokenBalance = async tokenAddress => {
-        if (!connected) return;
-        if (!network.web3.utils.isAddress(tokenAddress)) return 0;
-
-        try {
-            const contract = getContract(erc20Abi, tokenAddress);
-            const balance = await getTokenBalance(tokenAddress);
-            const decimal = await contract.methods.decimals().call();
-            const floatBalance = parseFloat(ethers.utils.formatEther(balance, decimal));
-            return floatBalance > 0 ? floatBalance.toFixed(2) : floatBalance.toFixed(6);
-        } catch (err) {
-            // do nothing
-        }
-
-        return false;
-    };
-
-    const getTokenSymbol = async tokenAddress => {
-        try {
-            const contract = getContract(erc20Abi, tokenAddress);
-            return await contract.methods.symbol().call();
-        } catch (err) {
-            return 'Error';
-        }
-    };
-
-    const getTokenDecimal = async tokenAddress => {
-        try {
-            const contract = getContract(erc20Abi, tokenAddress);
-            return await contract.methods.decimals().call();
-        } catch (err) {
-            return 'Error';
-        }
-    };
-
-    return (
-        <BlockchainContext.Provider
-            value={{
-                network,
-                eth,
-                account,
-                balance,
-                connected,
-                canConnect,
-                connect,
-                disconnect,
-                getTokenBalance,
-                getFormattedTokenBalance,
-                getTokenSymbol,
-                getTokenDecimal,
-            }}
-        >
-            {children}
-        </BlockchainContext.Provider>
-    );
+    return <BlockchainContext.Provider value={blockchain}>{children}</BlockchainContext.Provider>;
 };
 
-export default BlockchainNetworkProvider;
+export default BlockchainProvider;

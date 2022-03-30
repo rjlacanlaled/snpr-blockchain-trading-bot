@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { local } from 'web3modal';
-import useBlockchainNetwork from '../hooks/useBlockchainNetwork';
+import useBlockchainNetwork from '../hooks/useBlockchain';
 import useLocalStorageDatabase from '../hooks/useLocalStorageDatabase';
 import usePersist from '../hooks/usePersist';
 import useUniswap from '../hooks/useUniswap';

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import useBlockchainNetwork from '../hooks/useBlockchainNetwork';
+import useBlockchainNetwork from '../hooks/useBlockchain';
 import pancakeswapAbi from '../../data/pancakeswap-router-v2-abi.json';
 import uniswapAbi from '../..//data/uniswap-router-v3-abi.json';
 import { ChainId, Token, WETH, Fetcher, Trade, Route, TokenAmount, TradeType, Percent } from '@pancakeswap-libs/sdk-v2';

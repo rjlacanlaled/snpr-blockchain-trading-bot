@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useBlockchainNetwork from './hooks/useBlockchainNetwork';
+import useBlockchainNetwork from './hooks/useBlockchain';
 import PageSelection from './PageSelection';
 
 const Header = () => {
