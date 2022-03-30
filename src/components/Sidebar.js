@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GiLaserGun } from 'react-icons/gi';
 import { FaExchangeAlt } from 'react-icons/fa';
 import { RiExchangeDollarFill, RiRobotLine } from 'react-icons/ri';
@@ -10,6 +10,12 @@ const Sidebar = () => {
     const location = useLocation();
     const [active, setActive] = useState(location.pathname);
 
+    useEffect(() => {
+        console.log(location.pathname);
+        setActive(location.pathname);
+        console.log(active);
+    }, [location]);
+
     return (
         <Container>
             <LogoContainer>
@@ -20,20 +26,20 @@ const Sidebar = () => {
                 </TextContainer>
             </LogoContainer>
             <LinksContainer>
-                <LinkItem key='/'>
-                    <StyledLink active={active} to='/'>
+                <LinkItem active={active} key='/' path='/'>
+                    <StyledLink to='/'>
                         <Label>Exchange</Label>
                         <StyledFaExchangeAlt />
                     </StyledLink>
                 </LinkItem>
-                <LinkItem key='/auto'>
-                    <StyledLink active={active} to='auto'>
+                <LinkItem active={active} key='/auto' path='/auto'>
+                    <StyledLink to='auto'>
                         <Label>Auto Trade</Label>
                         <StyledAiOutlineRobot />
                     </StyledLink>
                 </LinkItem>
-                <LinkItem key='/auto'>
-                    <StyledLink active={active} to='limit'>
+                <LinkItem active={active} key='/limit' path='/limit'>
+                    <StyledLink to='limit'>
                         <Label>Limit Order</Label>
                         <StyledAiOutlineLineChart />
                     </StyledLink>
@@ -88,12 +94,12 @@ const LinkItem = styled.li`
     height: 40px;
     border-radius: 10px;
 
-    color: gray;
+    background-color: ${({ active, path }) => (active === path ? 'rgb(128, 128, 128, 0.2)' : 'transparent')};
     cursor: pointer;
 
     p,
     a {
-        color: gray;
+        color: ${({ active, path }) => (active === path ? 'hsl(194, 81%, 46%)' : 'gray')};
     }
 
     &:hover {
@@ -127,7 +133,7 @@ const StyledGiLaserGun = styled(GiLaserGun)`
 `;
 
 const StyledFaExchangeAlt = styled(FaExchangeAlt)``;
-const StyledAiOutlineRobot= styled(AiOutlineRobot)``;
+const StyledAiOutlineRobot = styled(AiOutlineRobot)``;
 const StyledAiOutlineLineChart = styled(AiOutlineLineChart)``;
 
 export default Sidebar;
