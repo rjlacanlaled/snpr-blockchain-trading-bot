@@ -30,18 +30,16 @@ const UniswapContextProvider = ({ children }) => {
             const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw.toString();
             const formattedAmountOutMin = ethers.formatUnits(amountOutMin, tokenOutDecimal);
 
-            return { amountOutMin, formattedAmountOutMin};
+            return { amountOutMin, formattedAmountOutMin };
         } catch (ex) {
-            console.log(ex.toString());
+            throw new Error('Error fetching amount out min');
         }
-
-        return false;
     };
 
     const uniswap = {
         getUniswapContract,
         getAmountOutMin,
-        setRouter
+        setRouter,
     };
 
     return <UniswapContext.Provider value={{ uniswap }}>{children}</UniswapContext.Provider>;
