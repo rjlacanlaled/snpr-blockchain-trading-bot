@@ -7,7 +7,7 @@ import Erc20ContextProvider from './components/contexts/Erc20Context';
 import Sidebar from './components/Sidebar';
 import Swap from './pages/Swap';
 import Header from './components/Header';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function App() {
 

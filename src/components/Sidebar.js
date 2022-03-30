@@ -15,15 +15,12 @@ const Sidebar = ({ show, toggle}) => {
     };
 
     useEffect(() => {
-        console.log(location.pathname);
         setActive(location.pathname);
-        console.log(active);
     }, [location]);
 
     useEffect(() => {
         setIsMinimized(document.body.clientWidth <= 1028);
         window.addEventListener('resize', handleResize);
-        console.log(isMinimized);
         return () => window.removeEventListener(handleResize);
     }, []);
 

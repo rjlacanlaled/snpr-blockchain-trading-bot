@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 
-const TokenDetails = ({ isSend, onChooseToken, defaultToken }) => {
+const TokenDetails = ({ isSend }) => {
     return (
         <Container>
             <BasicDetails>
@@ -69,7 +69,7 @@ const TokenSymbol = styled.p`
     transition: color 0.3s ease;
 `;
 const TradeSide = styled.p`
-    color: ${({isSend}) => isSend ? 'red' : 'green'};
+    color: ${({isSend}) => isSend ? 'orange' : 'green'};
 `;
 const TradeAmount = styled.div`
     display: flex;

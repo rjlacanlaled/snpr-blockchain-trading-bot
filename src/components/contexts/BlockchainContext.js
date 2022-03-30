@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createContext } from 'react';
 import Web3 from 'web3';
 import usePersist from '../hooks/usePersist';

@@ -1,5 +1,4 @@
 import { createContext, useEffect, useReducer } from 'react';
-import useLocalStorageDatabase from '../hooks/useLocalStorageDatabase';
 import tokenReducer, { initTokens, tokenStorage } from '../reducers/tokenReducer';
 
 export const TokenDetailsContext = createContext();

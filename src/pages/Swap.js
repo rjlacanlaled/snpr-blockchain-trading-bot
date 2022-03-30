@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import TokenDetails from '../components/TokenDetails';
 import { AiOutlineSwap } from 'react-icons/ai';
-import { useEffect } from 'react';
 
 const Swap = () => {
     return (
