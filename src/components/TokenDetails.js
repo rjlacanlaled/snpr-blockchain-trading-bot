@@ -1,22 +1,28 @@
 import styled from 'styled-components';
 import { BsFillCaretDownFill } from 'react-icons/bs';
+import useFloat from './hooks/useFloat';
+import { useState } from 'react';
 
 const TokenDetails = ({ isSend, logo }) => {
+    const [amount, setAmount] = useFloat('', 30);
+    const [tokenSymbol, setTokenSymbol] = useState('');
+    const [tokenName, setTokenName] = useState('');
+
     return (
         <Container>
             <BasicDetails>
                 <LogoContainer>
                     <TokenLogo src={logo || '/assets/binance-logo.svg'} />
-                    <TokenName>Token Name</TokenName>
+                    <TokenName>{tokenName || 'Select a token'}</TokenName>
                 </LogoContainer>
                 <SymbolContainer>
-                    <TokenSymbol>CRO</TokenSymbol>
+                    <TokenSymbol>{tokenSymbol || isSend ? 'BNB' : 'Select a token'}</TokenSymbol>
                     <StyledBsFillCaretDownFill />
                 </SymbolContainer>
             </BasicDetails>
             <TradeAmount>
                 <TradeSide isSend={isSend}>{isSend ? 'You Send' : 'You Get'}</TradeSide>
-                <Amount placeholder='0.0'></Amount>
+                <Amount placeholder='0.0' value={amount} onChange={e => setAmount(e.target.value)}></Amount>
             </TradeAmount>
         </Container>
     );
@@ -57,6 +63,7 @@ const TokenName = styled.p`
 const LogoContainer = styled.div`
     display: flex;
     gap: 5px;
+    margin-bottom: 10px;
 `;
 const TokenSymbol = styled.p`
     padding-top: 5px;
