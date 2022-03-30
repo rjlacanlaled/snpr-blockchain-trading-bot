@@ -32,7 +32,7 @@ const TitleContainer = styled.div`
 `;
 const MainTitle = styled.h1`
     color: hsl(0, 0%, 90%);
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 400;
 `;
 

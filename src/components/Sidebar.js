@@ -70,12 +70,12 @@ const TextContainer = styled.div`
 
 const CryptoText = styled.p`
     color: white;
-    font-size: 0.6rem;
+    font-size: 0.8rem;
 `;
 const SniprText = styled.p`
     color: white;
-    font-size: 1.2rem;
-    font-weight: 400;
+    font-size: 1.4rem;
+    font-weight: 900;
     letter-spacing: 5px;
 `;
 
@@ -122,7 +122,7 @@ const Label = styled.p``;
 // ICONS
 
 const StyledGiLaserGun = styled(GiLaserGun)`
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     color: hsl(0, 0%, 100%);
 `;
 
