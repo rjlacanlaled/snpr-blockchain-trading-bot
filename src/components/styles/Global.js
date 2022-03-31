@@ -20,6 +20,7 @@ const Global = createGlobalStyle`
 
         background-image: url('assets/background.webp');
         background-size: cover;
+        background-position: center;
         background-repeat: no-repeat;
 
         li {
@@ -32,7 +33,6 @@ const Global = createGlobalStyle`
             user-select: none;
         }
     }
-
 
 
 `;

@@ -11,7 +11,7 @@ const defaultRouter = '0x10ED43C718714eb63d5aA57B78B54704E256024E';
 const defaultGasPrice = ethers.utils.parseUnits('5', 'gwei');
 const defaultGas = ethers.utils.parseUnits('500000', 'wei');
 
-const UniswapContextProvider = ({ children }) => {
+const UniswapProvider = ({ children }) => {
     const { getContract, provider } = useBlockchain;
     const [router, setRouter] = usePersist('uniswapRouter', defaultRouter);
 
@@ -45,4 +45,4 @@ const UniswapContextProvider = ({ children }) => {
     return <UniswapContext.Provider value={{ uniswap }}>{children}</UniswapContext.Provider>;
 };
 
-export default UniswapContextProvider;
+export default UniswapProvider;

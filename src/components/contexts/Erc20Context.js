@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 
 export const Erc20Context = createContext();
 
-const Erc20ContextProvider = ({ children }) => {
+const Erc20Provider = ({ children }) => {
     const { getContract, provider } = useBlockchain();
 
     // TOKEN DETAILS FETCHER
@@ -74,4 +74,4 @@ const Erc20ContextProvider = ({ children }) => {
     return <Erc20Context.Provider value={erc20}>{children}</Erc20Context.Provider>;
 };
 
-export default Erc20ContextProvider;
+export default Erc20Provider;

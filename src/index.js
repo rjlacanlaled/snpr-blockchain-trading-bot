@@ -2,9 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
+import BlockchainProvider from './components/contexts/BlockchainContext';
+import UniswapProvider from './components/contexts/UniswapContext';
+import Erc20Provider from './components/contexts/Erc20Context';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+    uri: 'https://rickandmortyapi.com/graphql',
+    cache: new InMemoryCache(),
+});
+
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <ApolloProvider client={client}>
+            <BlockchainProvider>
+                <Erc20Provider>
+                    <UniswapProvider>
+                        <App />
+                    </UniswapProvider>
+                </Erc20Provider>
+            </BlockchainProvider>
+        </ApolloProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );
