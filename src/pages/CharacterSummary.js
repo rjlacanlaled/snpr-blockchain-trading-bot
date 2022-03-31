@@ -1,12 +1,13 @@
 import { CircularProgress, Grow, Fade, Slide } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import EpisodeBox from '../components/EpisodeBox';
 import useCharacter from '../components/hooks/useCharacter';
 import { Error } from '../components/styles/Error.styled';
 
 const CharacterSummary = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const { error, loading, data } = useCharacter(id);
     const [load, setLoad] = useState(false);
@@ -15,23 +16,13 @@ const CharacterSummary = () => {
         if (data) setLoad(true);
     }, [data, load]);
 
-    // name
-    // status
-    // species
-    // type
-    // gender
-    // image
-    // episode {
-    //     name
-    //     air_date
-    // }
-
     return (
         <Container>
             {error ? (
-                <Error>Error loading the character</Error>
+                <Error>Error loading the character, retry later.</Error>
             ) : data ? (
                 <ContentContainer>
+                    <BackButton onClick={() => navigate("/graphql")}>Back to Main Page</BackButton>
                     <ResultContainer>
                         <ProfileContainer>
                             <Grow in={load}>
@@ -193,6 +184,25 @@ const Episodes = styled.div`
 
     gap: 5px;
     overflow: auto;
+`;
+
+const BackButton = styled.button`
+    cursor: pointer;
+    max-width: 300px;
+    padding: 10px 20px 10px 20px;
+    font-size: 2rem;
+    font-weight: 300;
+    border-radius: 15px;
+    border: 0.1px solid rgb(180, 180, 180, 0.4);
+
+    background-color: hsl(216, 41%, 5%, 0.7);
+    color: hsl(0, 0%, 80%);
+    align-self: flex-end;
+
+    &:hover {
+        background-color: hsl(216, 41%, 5%, 0.2);
+        color: hsl(0, 0%, 90%);
+    }
 `;
 
 export default CharacterSummary;

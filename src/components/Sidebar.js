@@ -118,12 +118,17 @@ const LinkItem = styled.li`
     border-radius: 10px;
 
     background-color: ${({ active, path }) =>
-        active.replace('/', '').match(path) ? 'rgb(128, 128, 128, 0.2)' : 'transparent'};
+        active === path || ((path !== '/' && active !== '/') && active.match(path))
+            ? 'rgb(128, 128, 128, 0.2)'
+            : 'transparent'};
     cursor: pointer;
 
     p,
     a {
-        color: ${({ active, path }) => (active.replace('/', '').match(path) ? 'hsl(194, 81%, 46%)' : 'gray')};
+        color: ${({ active, path }) =>
+            active === path || ((path !== '/' && active !== '/') && active.match(path))
+                ? 'hsl(194, 81%, 46%)'
+                : 'gray'};
     }
 
     &:hover {
