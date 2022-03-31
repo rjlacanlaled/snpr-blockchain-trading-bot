@@ -4,8 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import CharacterDetails from '../components/CharacterDetails';
 import CharacterId from '../components/CharacterId';
-import DetailItem from '../components/DetailItem';
-import EpisodeBox from '../components/EpisodeBox';
 import EpisodeList from '../components/EpisodeList';
 import useCharacter from '../components/hooks/useCharacter';
 import { Error } from '../components/styles/Error.styled';

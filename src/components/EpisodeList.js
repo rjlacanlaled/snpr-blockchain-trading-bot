@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import EpisodeBox from './EpisodeBox';
 
 const EpisodeList = ({ episodes }) => {
+
     return (
         <Container>
             {episodes.length && <Title>Episodes</Title>}
@@ -29,6 +30,13 @@ const List = styled.div`
 
     gap: 5px;
     overflow: auto;
+`;
+
+const Title = styled.p`
+    font-size: 2rem;
+    color: hsl(0, 0%, 80%);
+    border-bottom: 1px solid rgb(180, 180, 180, 0.4);
+    padding-bottom: 20px;
 `;
 
 export default EpisodeList;

@@ -1,13 +1,24 @@
+import { Grow } from '@mui/material';
 import styled from 'styled-components';
 
 const CharacterId = ({ image, name }) => {
-    <Container>
-        <Image src={image} />
-        <Name>{name}</Name>
-    </Container>;
+    return (
+        <Container>
+            <Grow in={true}>
+                <Image src={image} />
+            </Grow>
+            <Name>{name}</Name>
+        </Container>
+    );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+`;
 const Image = styled.img`
     height: 250px;
     width: 250px;

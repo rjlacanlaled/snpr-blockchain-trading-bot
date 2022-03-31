@@ -20,11 +20,11 @@ const GraphQLTest = () => {
                     {error ? (
                         <Error>Something went wrong, please try again...</Error>
                     ) : data ? (
-                        <ResultContainer>
+                        <CharacterContainer>
                             {data.characters.results.map(character => (
                                 <CharacterProfile key={character.id} character={character} />
                             ))}
-                        </ResultContainer>
+                        </CharacterContainer>
                     ) : (
                         <CircularProgress color='success' />
                     )}
@@ -58,7 +58,7 @@ const Container = styled.div`
     }
 `;
 
-const ResultContainer = styled.div`
+const CharacterContainer = styled.div`
     display: flex;
     gap: 30px;
     width: 100%;
@@ -67,7 +67,6 @@ const ResultContainer = styled.div`
 
     overflow: auto;
 `;
-const ErrorMessage = styled.div``;
 
 const MainTitle = styled.h1`
     color: hsl(0, 0%, 90%);
