@@ -3,7 +3,7 @@ import useCharacters from '../components/hooks/useCharacters';
 import CharacterProfile from '../components/CharacterProfile';
 import { Outlet, useParams } from 'react-router-dom';
 import { Error } from '../components/styles/Error.styled';
-import { CircularProgress, Grow } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 
 const GraphQLTest = () => {
     const { error, loading, data } = useCharacters();

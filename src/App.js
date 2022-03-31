@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Global from './components/styles/Global';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Swap from './pages/Swap';
 import Header from './components/Header';
@@ -14,18 +14,16 @@ export default function App() {
 
     return (
         <Container>
-            <BrowserRouter>
-                <Global />
-                <Header toggle={setShowSidebar} sidebarVisible={showSidebar} />
-                <Sidebar show={showSidebar} toggle={setShowSidebar} />
-                <Routes>
-                    <Route path='/' element={<Swap />} />
-                    <Route path="/limit" element={<Sample />} />
-                    <Route path='/graphql' element={<GraphQLTest />}>
-                        <Route path=':id' element={<CharacterSummary />} />
-                    </Route>
-                </Routes>
-            </BrowserRouter>
+            <Global />
+            <Header toggle={setShowSidebar} sidebarVisible={showSidebar} />
+            <Sidebar show={showSidebar} toggle={setShowSidebar} />
+            <Routes>
+                <Route path='/' element={<Swap />} />
+                <Route path='/limit' element={<Sample />} />
+                <Route path='/graphql' element={<GraphQLTest />}>
+                    <Route path=':id' element={<CharacterSummary />} />
+                </Route>
+            </Routes>
         </Container>
     );
 }
