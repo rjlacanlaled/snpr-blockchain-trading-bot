@@ -2,6 +2,7 @@ import { CircularProgress, Grow, Fade, Slide } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import DetailItem from '../components/DetailItem';
 import EpisodeBox from '../components/EpisodeBox';
 import useCharacter from '../components/hooks/useCharacter';
 import { Error } from '../components/styles/Error.styled';
@@ -22,7 +23,7 @@ const CharacterSummary = () => {
                 <Error>Error loading the character, retry later.</Error>
             ) : data ? (
                 <ContentContainer>
-                    <BackButton onClick={() => navigate("/graphql")}>Back to Main Page</BackButton>
+                    <BackButton onClick={() => navigate('/graphql')}>Back to Main Page</BackButton>
                     <ResultContainer>
                         <ProfileContainer>
                             <Grow in={load}>
@@ -33,24 +34,13 @@ const CharacterSummary = () => {
                             </Fade>
                         </ProfileContainer>
                         <SummaryContainer>
-                            <SummaryItem>
-                                <SummaryName>Status</SummaryName>
-                                <SummaryDescription>{data.character.status}</SummaryDescription>
-                            </SummaryItem>
-                            <SummaryItem>
-                                <SummaryName>Species</SummaryName>
-                                <SummaryDescription>{data.character.species}</SummaryDescription>
-                            </SummaryItem>
-                            <SummaryItem>
-                                <SummaryName>Created</SummaryName>
-                                <SummaryDescription>
-                                    {new Date(data.character.created).toLocaleDateString()}
-                                </SummaryDescription>
-                            </SummaryItem>
-                            <SummaryItem>
-                                <SummaryName>Gender</SummaryName>
-                                <SummaryDescription>{data.character.gender}</SummaryDescription>
-                            </SummaryItem>
+                            <DetailItem name='Status' description={data.character.status} />
+                            <DetailItem name='Species' description={data.character.species} />
+                            <DetailItem
+                                name='Created'
+                                description={new Date(data.character.created).toLocaleDateString()}
+                            />
+                            <DetailItem name='Gender' description={data.character.gender} />
                         </SummaryContainer>
                     </ResultContainer>
 
