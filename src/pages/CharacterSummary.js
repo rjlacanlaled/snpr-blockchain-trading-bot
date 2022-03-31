@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import CharacterDetails from '../components/CharacterDetails';
 import DetailItem from '../components/DetailItem';
 import EpisodeBox from '../components/EpisodeBox';
+import EpisodeList from '../components/EpisodeList';
 import useCharacter from '../components/hooks/useCharacter';
 import { Error } from '../components/styles/Error.styled';
 
@@ -40,17 +41,9 @@ const CharacterSummary = () => {
                             created={data.character.created}
                             gender={data.character.gender}
                         />
-
                     </ResultContainer>
 
-                    <EpisodeContainer>
-                        {data.character.episode.length && <EpisodeLabel>Episodes</EpisodeLabel>}
-                        <Episodes>
-                            {data.character.episode.map(item => (
-                                <EpisodeBox key={item.name} name={item.name} date={item.air_date} />
-                            ))}
-                        </Episodes>
-                    </EpisodeContainer>
+                    <EpisodeList episodes={data.character.episode} />
                 </ContentContainer>
             ) : (
                 <CircularProgress color='success' />
@@ -126,24 +119,6 @@ const EpisodeLabel = styled.h2`
 
     border-bottom: 1px solid rgb(180, 180, 180, 0.4);
     padding-bottom: 20px;
-`;
-
-const EpisodeContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding: 30px 10px 30px 10px;
-    border-radius: 30px;
-    max-width: 800px;
-
-    background-color: rgb(0, 0, 0, 0.5);
-`;
-
-const Episodes = styled.div`
-    display: flex;
-
-    gap: 5px;
-    overflow: auto;
 `;
 
 const BackButton = styled.button`
