@@ -1,4 +1,5 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Grow, Fade, Slide } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import EpisodeBox from '../components/EpisodeBox';
@@ -8,6 +9,11 @@ import { Error } from '../components/styles/Error.styled';
 const CharacterSummary = () => {
     const { id } = useParams();
     const { error, loading, data } = useCharacter(id);
+    const [load, setLoad] = useState(false);
+
+    useEffect(() => {
+        if (data) setLoad(true);
+    }, [data, load]);
 
     // name
     // status
@@ -28,8 +34,12 @@ const CharacterSummary = () => {
                 <ContentContainer>
                     <ResultContainer>
                         <ProfileContainer>
-                            <Image src={data.character.image} />
-                            <Name>{data.character.name} </Name>
+                            <Grow in={load}>
+                                <Image src={data.character.image} />
+                            </Grow>
+                            <Fade in={load}>
+                                <Name>{data.character.name}</Name>
+                            </Fade>
                         </ProfileContainer>
                         <SummaryContainer>
                             <SummaryItem>
@@ -116,7 +126,7 @@ const Image = styled.img`
     border-radius: 500px;
 `;
 const Name = styled.p`
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: white;
 

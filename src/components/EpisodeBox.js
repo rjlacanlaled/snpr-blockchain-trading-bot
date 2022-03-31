@@ -22,13 +22,21 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: space-between;
 
-    min-height: 200px;
     min-width: 200px;
+    min-height: 200px;
+    max-width: 200px;
+    max-height: 200px;
 
     padding: 20px;
     border-radius: 20px;
 
     background-color: hsl(216, 41%, 5%, 0.7);
+
+    transition: background-color 0.5s;
+
+    &:hover {
+        background-color: hsl(216, 41%, 10%, 0.7);
+    }
 `;
 
 const ItemContainer = styled.div`
