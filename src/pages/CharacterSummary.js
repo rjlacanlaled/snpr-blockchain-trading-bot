@@ -2,6 +2,7 @@ import { CircularProgress, Grow, Fade, Slide } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import CharacterDetails from '../components/CharacterDetails';
 import DetailItem from '../components/DetailItem';
 import EpisodeBox from '../components/EpisodeBox';
 import useCharacter from '../components/hooks/useCharacter';
@@ -33,15 +34,13 @@ const CharacterSummary = () => {
                                 <Name>{data.character.name}</Name>
                             </Fade>
                         </ProfileContainer>
-                        <SummaryContainer>
-                            <DetailItem name='Status' description={data.character.status} />
-                            <DetailItem name='Species' description={data.character.species} />
-                            <DetailItem
-                                name='Created'
-                                description={new Date(data.character.created).toLocaleDateString()}
-                            />
-                            <DetailItem name='Gender' description={data.character.gender} />
-                        </SummaryContainer>
+                        <CharacterDetails
+                            status={data.character.status}
+                            species={data.character.species}
+                            created={data.character.created}
+                            gender={data.character.gender}
+                        />
+
                     </ResultContainer>
 
                     <EpisodeContainer>
@@ -119,35 +118,6 @@ const ProfileContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 20px;
-`;
-const SummaryContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-`;
-const SummaryItem = styled.div`
-    display: flex;
-    gap: 30px;
-
-    justify-content: space-between;
-
-    width: 100%;
-    padding-bottom: 10px;
-    border-bottom: 0.1px solid rgb(180, 180, 180, 0.4);
-`;
-const SummaryName = styled.p`
-    color: white;
-    font-size: 2rem;
-    flex: 1 0 25%;
-    color: hsl(160, 100%, 40%);
-`;
-const SummaryDescription = styled.p`
-    color: white;
-    font-size: 2rem;
-    flex: 1 50%;
-    font-weight: 300;
 `;
 
 const EpisodeLabel = styled.h2`
