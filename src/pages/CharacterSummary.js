@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import CharacterDetails from '../components/CharacterDetails';
+import CharacterId from '../components/CharacterId';
 import DetailItem from '../components/DetailItem';
 import EpisodeBox from '../components/EpisodeBox';
 import EpisodeList from '../components/EpisodeList';
@@ -26,22 +27,15 @@ const CharacterSummary = () => {
             ) : data ? (
                 <ContentContainer>
                     <BackButton onClick={() => navigate('/graphql')}>Back to Main Page</BackButton>
-                    <ResultContainer>
-                        <ProfileContainer>
-                            <Grow in={load}>
-                                <Image src={data.character.image} />
-                            </Grow>
-                            <Fade in={load}>
-                                <Name>{data.character.name}</Name>
-                            </Fade>
-                        </ProfileContainer>
+                    <CharacterContainer>
+                        <CharacterId image={data.character.image} name={data.character.name} />
                         <CharacterDetails
                             status={data.character.status}
                             species={data.character.species}
                             created={data.character.created}
                             gender={data.character.gender}
                         />
-                    </ResultContainer>
+                    </CharacterContainer>
 
                     <EpisodeList episodes={data.character.episode} />
                 </ContentContainer>
@@ -80,7 +74,7 @@ const ContentContainer = styled.div`
     gap: 30px;
 `;
 
-const ResultContainer = styled.div`
+const CharacterContainer = styled.div`
     display: flex;
     gap: 50px;
     width: 100%;
@@ -92,33 +86,6 @@ const ResultContainer = styled.div`
     border: 0.1px solid rgb(180, 180, 180, 0.4);
 
     background-color: hsl(216, 41%, 5%, 0.7);
-`;
-const Image = styled.img`
-    height: 250px;
-    width: 250px;
-    border-radius: 500px;
-`;
-const Name = styled.p`
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: white;
-
-    text-align: center;
-`;
-const ProfileContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-`;
-
-const EpisodeLabel = styled.h2`
-    font-size: 2rem;
-    color: hsl(0, 0%, 80%);
-
-    border-bottom: 1px solid rgb(180, 180, 180, 0.4);
-    padding-bottom: 20px;
 `;
 
 const BackButton = styled.button`
