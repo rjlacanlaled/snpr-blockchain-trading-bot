@@ -7,6 +7,7 @@ import Header from './components/Header';
 import { useState } from 'react';
 import GraphQLTest from './pages/GraphQLTest';
 import CharacterSummary from './pages/CharacterSummary';
+import Sample from './components/hooks/Sample';
 
 export default function App() {
     const [showSidebar, setShowSidebar] = useState(false);
@@ -19,6 +20,7 @@ export default function App() {
                 <Sidebar show={showSidebar} toggle={setShowSidebar} />
                 <Routes>
                     <Route path='/' element={<Swap />} />
+                    <Route path="/limit" element={<Sample />} />
                     <Route path='/graphql' element={<GraphQLTest />}>
                         <Route path=':id' element={<CharacterSummary />} />
                     </Route>

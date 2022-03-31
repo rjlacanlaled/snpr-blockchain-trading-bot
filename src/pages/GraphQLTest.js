@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import useCharacters from '../components/hooks/useCharacters';
 import CharacterProfile from '../components/CharacterProfile';
-import { Spinner } from 'react-bootstrap';
 import { Outlet, useParams } from 'react-router-dom';
 import { Error } from '../components/styles/Error.styled';
+import { CircularProgress } from '@mui/material';
 
 const GraphQLTest = () => {
     const { error, loading, data } = useCharacters();
@@ -26,7 +26,7 @@ const GraphQLTest = () => {
                             ))}
                         </ResultContainer>
                     ) : (
-                        <Spinner animation='grow' variant='dark' />
+                        <CircularProgress color="success"/>
                     )}
                 </Container>
             ) : (
@@ -45,15 +45,12 @@ const Container = styled.div`
     padding-top: 120px;
     padding-left: 250px;
 
-    background-image: url('/assets/background.webp');
-
     gap: 80px;
 
     height: 100vh;
     width: 100vw;
 
     overflow: auto;
-
 
     @media (max-width: 1020px) {
         justify-content: flex-start;
@@ -62,7 +59,13 @@ const Container = styled.div`
 `;
 
 const ResultContainer = styled.div`
+    display: flex;
+    gap: 30px;
     width: 100%;
+    max-height: 600px;
+    padding: 40px;
+
+    overflow: auto;
 `;
 const ErrorMessage = styled.div``;
 

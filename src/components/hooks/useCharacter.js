@@ -1,23 +1,30 @@
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql } from '@apollo/client';
 
 const GET_CHARACTER = gql`
-    query getCharacter($id: ID!){
+    query getCharacter($id: ID!) {
         character(id: $id) {
-            id
             name
+            status
+            species
+            created
+            gender
             image
+            episode {
+                name
+                air_date
+            }
         }
     }
-`
+`;
 
-const useCharacter = (id) => {
-    const {error, loading, data} = useQuery(GET_CHARACTER, {
+const useCharacter = id => {
+    const { error, loading, data } = useQuery(GET_CHARACTER, {
         variables: {
-            id: id
-        }
+            id: id,
+        },
     });
 
     return { error, loading, data };
-}
+};
 
 export default useCharacter;
