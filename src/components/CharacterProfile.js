@@ -22,6 +22,8 @@ const Container = styled.div`
     align-items: center;
     gap: 20px;
 
+    height: min-content;
+
     transition: transform 0.5s;
 
     p {
@@ -38,14 +40,16 @@ const Container = styled.div`
     cursor: pointer;
 `;
 const Picture = styled.img`
-    width: 200px;
-    height: 200px;
+    aspect-ratio: 1/1;
+    height: 25vh;
+    min-height: 100px;
+    max-height: 200px;
 
     border-radius: 500px;
 `;
 const Name = styled.p`
     text-align: center;
-    font-size: 1.2rem;
+    font-size: calc(0.5vh + 1rem);
     font-weight: 600;
 `;
 

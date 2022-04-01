@@ -9,7 +9,6 @@ const GraphQLTest = () => {
     const { error, loading, data } = useCharacters();
     const { id } = useParams();
 
-    console.log(id);
     return (
         <>
             {!id ? (
@@ -47,7 +46,7 @@ const Container = styled.div`
 
     gap: 80px;
 
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
 
     overflow: auto;
@@ -62,10 +61,10 @@ const CharacterContainer = styled.div`
     display: flex;
     gap: 30px;
     width: 100%;
-    max-height: 600px;
     padding: 40px;
+    min-height: max-content;
 
-    overflow: auto;
+    overflow-x: scroll;
 `;
 
 const MainTitle = styled.h1`

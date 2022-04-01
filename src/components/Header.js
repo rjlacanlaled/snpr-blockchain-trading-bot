@@ -6,7 +6,7 @@ const Header = ({ toggle, sidebarVisible }) => {
 
     return (
         <Container>
-            <StyledGiHamburgerMenu onClick={() => toggle(true)} visible={sidebarVisible ? '1' : undefined}/>
+            <StyledGiHamburgerMenu onClick={() => toggle(true)} visible={sidebarVisible ? undefined : "1"}/>
             <MainOptionsContainer>
                 <ConnectWalletButton>Connect wallet</ConnectWalletButton>
                 <StyledRiSettings4Fill />
@@ -27,7 +27,7 @@ const Container = styled.div`
     padding-left: 4rem;
     padding-right: 4rem;
 
-    background-color: hsl(216, 41%, 10%, 0.5);
+    background-color: hsl(216, 41%, 15%, 0.2);
 
     height: 90px;
 `;
@@ -67,7 +67,7 @@ const MainOptionsContainer = styled.div`
 `;
 
 const StyledGiHamburgerMenu = styled(GiHamburgerMenu)`
-    visibility: ${({visible}) => visible ? 'hidden' : 'visible'};
+    visibility: ${({visible}) => visible == "1" ? 'visible' : 'hidden'};
     cursor: pointer;
     color: gray;
     font-size: 1.8rem;
