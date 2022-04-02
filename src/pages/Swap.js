@@ -1,8 +1,71 @@
 import styled from 'styled-components';
 import TokenDetails from '../components/TokenDetails';
 import { AiOutlineSwap } from 'react-icons/ai';
+import useUniswap from '../components/hooks/useUniswap';
+import { useEffect, useState } from 'react';
+import useToken, { TOKEN_ACTIONS } from '../components/hooks/useToken';
 
 const Swap = () => {
+    const { hasAllowance, approveToSpend } = useUniswap();
+    const [sendToken, sendTokenDispatcher] = useToken();
+    const [getToken, getTokenDispatcher] = useToken();
+    const [prioritizeGetAmount, setPrioritizeGetAmount] = useState(true);
+    const [canSpend, setCanSpend] = useState(false);
+    const [approving, setApproving] = useState(false);
+
+    const handleSwitch = () => {
+        const temp = sendToken;
+        sendTokenDispatcher({ type: TOKEN_ACTIONS.UPDATE_TOKEN, payload: { data: getToken } });
+        getTokenDispatcher({ type: TOKEN_ACTIONS.UPDATE_TOKEN, payload: { data: temp } });
+    };
+
+    const handleSwap = e => {
+        e.preventDefault();
+        if (canSpend) {
+            // swap tokens
+        } else {
+            setApproving(true);
+        }
+    };
+
+    useEffect(() => {
+        if (!approving) return;
+        const approve = async () => {
+            try {
+                const tx = await approveToSpend(sendToken.contract);
+                setCanSpend(await hasAllowance(sendToken.contract));
+                setApproving(false);
+            } catch (err) {
+                setCanSpend(await hasAllowance(sendToken.contract));
+
+                setApproving(false);
+            }
+        };
+
+        approve();
+    }, [approving]);
+
+    useEffect(() => {
+        const checkAllowance = async () => {
+            setCanSpend(await hasAllowance(sendToken.contract));
+        };
+        if (sendToken.contract !== '') {
+            if (sendToken.contract === getToken.contract) {
+                return getTokenDispatcher({ type: TOKEN_ACTIONS.RESET_TOKEN });
+            }
+
+            checkAllowance();
+        }
+    }, [sendToken]);
+
+    useEffect(() => {
+        if (getToken.contract !== '') {
+            if (getToken.contract === sendToken.contract) {
+                return sendTokenDispatcher({ type: TOKEN_ACTIONS.RESET_TOKEN });
+            }
+        }
+    }, [getToken]);
+
     return (
         <Container>
             <TitleContainer>
@@ -11,13 +74,42 @@ const Swap = () => {
             </TitleContainer>
             <TradeForm>
                 <TokenInputContainer>
-                    <TokenDetails isSend={true} />
-                    <TokenDetails isSend={false} />
-                    <StyledAiOutlineSwap />
+                    <TokenDetails
+                        isSend={true}
+                        token={sendToken}
+                        onTokenChange={sendTokenDispatcher}
+                        onAmountChange={setPrioritizeGetAmount}
+                        ignore={getToken.contract}
+                    />
+                    <TokenDetails
+                        isSend={false}
+                        token={getToken}
+                        onTokenChange={getTokenDispatcher}
+                        onAmountChange={setPrioritizeGetAmount}
+                        ignore={sendToken.contract}
+                    />
+                    <StyledAiOutlineSwap onClick={handleSwitch} />
                 </TokenInputContainer>
                 <SwapDetailsContainer>
                     <Details></Details>
-                    <SwapButton>Swap</SwapButton>
+                    <SwapButton
+                        disabled={
+                            !(sendToken.contract && getToken.contract) ||
+                            ((parseFloat(sendToken.amount) <= 0 || sendToken.amount === '') && canSpend) ||
+                            approving
+                        }
+                        onClick={handleSwap}
+                    >
+                        {approving
+                            ? 'Approving'
+                            : sendToken.contract && getToken.contract
+                            ? canSpend
+                                ? parseFloat(sendToken.amount) <= 0 || !sendToken.amount
+                                    ? 'Enter amount'
+                                    : 'Swap'
+                                : 'Approve'
+                            : 'Choose tokens to swap'}
+                    </SwapButton>
                 </SwapDetailsContainer>
             </TradeForm>
         </Container>
@@ -30,7 +122,7 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 140px;
+    padding-top: 50px;
     padding-left: 250px;
 
     gap: 80px;
@@ -43,7 +135,6 @@ const Container = styled.div`
     @media (max-width: 1020px) {
         justify-content: flex-start;
         padding-left: 0px;
-
     }
 `;
 
@@ -52,8 +143,6 @@ const TitleContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 30px;
-
-
 `;
 const MainTitle = styled.h1`
     color: hsl(0, 0%, 90%);
@@ -145,6 +234,11 @@ const SwapButton = styled.button`
     &:hover {
         background-color: rgb(23, 169, 214, 0.5);
         color: hsl(194, 81%, 60%);
+    }
+
+    &:disabled {
+        background-color: gb(180, 180, 180, 0.2);
+        cursor: not-allowed;
     }
 `;
 

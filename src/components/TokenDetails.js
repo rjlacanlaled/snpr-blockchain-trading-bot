@@ -1,26 +1,53 @@
 import styled from 'styled-components';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import useFloat from './hooks/useFloat';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from './styles/Modal.styled';
 import TokenSelect from './TokenSelect';
+import { TOKEN_ACTIONS } from './hooks/useToken';
 
-const TokenDetails = ({ isSend, logo }) => {
-    const [amount, setAmount] = useFloat('', 30);
-    const [tokenSymbol, setTokenSymbol] = useState('');
-    const [tokenName, setTokenName] = useState('');
-    
+const TokenDetails = ({ logo, isSend, token, onTokenChange, onAmountChange }) => {
     const [showSelectToken, setShowSelectToken] = useState(false);
+    const [amount, setAmount] = useFloat(token.amount);
+
+    useEffect(() => {
+        onAmountChange(isSend);
+        onTokenChange({
+            type: TOKEN_ACTIONS.UPDATE_AMOUNT,
+            payload: {
+                amount: amount,
+            },
+        });
+    }, [amount]);
+
+    const handleTokenInfo = ({ contract, symbol, name }) => {
+        // setTokenSymbol(symbol);
+        // setTokenName(name);
+        // onContractChange(contract);
+        onTokenChange({ 
+            type: TOKEN_ACTIONS.UPDATE_TOKEN, 
+            payload: {
+                data: {
+                    contract,
+                    symbol,
+                    name,
+                    amount
+                }
+            }
+        })
+
+        setShowSelectToken(false);
+    };
 
     return (
         <Container>
             <BasicDetails>
                 <LogoContainer>
                     <TokenLogo src={logo || '/assets/binance-logo.svg'} />
-                    <TokenName>{tokenName || 'Select a token'}</TokenName>
+                    <TokenName>{token.name || 'Select a token'}</TokenName>
                 </LogoContainer>
                 <SymbolContainer onClick={() => setShowSelectToken(true)}>
-                    <TokenSymbol>{tokenSymbol || isSend ? 'BNB' : 'Select a token'}</TokenSymbol>
+                    <TokenSymbol>{token.symbol || 'Select a token'}</TokenSymbol>
                     <StyledBsFillCaretDownFill />
                 </SymbolContainer>
             </BasicDetails>
@@ -29,9 +56,8 @@ const TokenDetails = ({ isSend, logo }) => {
                 <Amount placeholder='0.0' value={amount} onChange={e => setAmount(e.target.value)}></Amount>
             </TradeAmount>
             <Modal show={showSelectToken}>
-                <TokenSelect onFinish={setShowSelectToken} />
+                <TokenSelect onFinish={setShowSelectToken} onTokenChange={handleTokenInfo} />
             </Modal>
-
         </Container>
     );
 };

@@ -1,13 +1,47 @@
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useBlockchain from './hooks/useBlockchain';
+import { fetchTokenDetails, getTokenDatabase } from '../services/pancakeswap';
 
-const TokenSelect = ({ onTokenSelect, onFinish }) => {
-    const [searchResult, setSearchResult] = useState('');
+const TokenSelect = ({ onTokenChange, onFinish }) => {
+    const { isValidAddress } = useBlockchain();
+    const [searchResult, setSearchResult] = useState('Search');
     const [search, setSearch] = useState('');
+    const [symbol, setSymbol] = useState('');
+    const [name, setName] = useState('');
+    const [contract, setContract] = useState('');
 
-    const handleSearch = e => {
+    const handleSearchConfirm = e => {
         e.preventDefault();
+        onTokenChange({ symbol, name, contract });
+    };
+
+
+    useEffect(() => {
+        const findToken = async () => {
+            try {
+                const tokenDetails = await fetchTokenDetails(search);
+                setSearchResult(tokenDetails.symbol);
+                setSymbol(tokenDetails.symbol);
+                setName(tokenDetails.name);
+                setContract(tokenDetails.contract);
+            } catch (err) {
+                console.log(err);
+                setSearchResult('Invalid');
+            }
+        };
+
+        if (search === '') return setSearchResult('Search');
+        if (!isValidAddress(search)) return setSearchResult('Invalid');
+
+        findToken();
+    }, [search]);
+
+    const handleTokenClick = (e, { name, symbol, contract }) => {
+        e.preventDefault();
+        onTokenChange({ symbol, name, contract });
+        onFinish(false);
     };
 
     return (
@@ -18,14 +52,34 @@ const TokenSelect = ({ onTokenSelect, onFinish }) => {
             </TitleContainer>
             <SelectionContainer>
                 <SearchContainer>
-                    <ContractAddress placeholder='Search name or paste address' />
-                    <SearchResult onClick={handleSearch} disabled={!searchResult}>
-                        {searchResult || 'Search'}
+                    <ContractAddress
+                        placeholder='Search name or paste address'
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                    <SearchResult
+                        onClick={handleSearchConfirm}
+                        disabled={!searchResult || searchResult === 'Search' || searchResult === 'Invalid'}
+                    >
+                        {searchResult}
                     </SearchResult>
                 </SearchContainer>
                 <CommonTokensContainer></CommonTokensContainer>
             </SelectionContainer>
-            <TokenList></TokenList>
+            <TokenList>
+                <TokenListLabel>Token List</TokenListLabel>
+                {getTokenDatabase().map(token => {
+                    return (
+                        <TokenButton
+                            key={token.contract}
+                            value={token.contract}
+                            onClick={(e) => handleTokenClick(e, token)}
+                        >
+                            {token.symbol}
+                        </TokenButton>
+                    );
+                })}
+            </TokenList>
         </Container>
     );
 };
@@ -48,6 +102,17 @@ const TitleContainer = styled.div`
 
     border-bottom: 0.1px solid rgb(180, 180, 180, 0.4);
 `;
+
+const TokenListLabel = styled.p`
+    width: 100%;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 0.1px solid rgb(180, 180, 180, 0.4);
+    position: sticky;
+    top: 0;
+`;
+
 const Title = styled.p`
     margin: 15px;
     font-size: 2rem;
@@ -123,6 +188,39 @@ const ContractAddress = styled.input`
     }
 `;
 const CommonTokensContainer = styled.div``;
-const TokenList = styled.div``;
+const TokenList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    overflow: auto;
+`;
+
+const TokenButton = styled.button`
+    cursor: pointer;
+
+    background-color: transparent;
+    border: 0.5px solid rgb(180, 180, 180, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+
+    text-overflow: ellipsis;
+    color: white;
+    max-width: 100%;
+
+    &:hover {
+        background-color: rgb(180, 180, 180, 0.4);
+    }
+
+    &:disabled {
+        background-color: rgb(180, 180, 180, 0.3);
+        color: hsl(0, 0%, 60%);
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: rgb(180, 180, 180, 0.1);
+        }
+    }
+`;
 
 export default TokenSelect;

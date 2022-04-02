@@ -5,8 +5,9 @@ import usePersist from '../hooks/usePersist';
 
 export const BlockchainContext = createContext();
 
-const defaultProviders = ['wss://young-proud-lake.bsc.quiknode.pro/2b606bf9c9bf278fee8c4aaa347f660237e52e06/'];
+const defaultProviders = ['wss://withered-polished-cloud.bsc.quiknode.pro/ee5f37006e246872ffd07416bb7bd9d38fc707da/'];
 
+// geth --config ./config.toml --datadir ./node  --cache 8000 --rpc.allow-unprotected-txs --txlookuplimit 0susudo 
 const BlockchainProvider = ({ children }) => {
     const [eth, setEth] = useState(window.ethereum);
     const [account, setAccount] = usePersist('currentAccount');
@@ -64,6 +65,13 @@ const BlockchainProvider = ({ children }) => {
         return parseFloat(web3.utils.fromWei(await getBalance(address), 'ether')).toFixed(4);
     };
 
+    const isValidAddress = address => {
+        if (!address) return false;
+        const web3 = new Web3(provider);
+ 
+        return web3.utils.isAddress(address);
+    }
+
     // GET ETH BALANCE
 
     // SMART CONTRACT FACTORY
@@ -73,6 +81,7 @@ const BlockchainProvider = ({ children }) => {
         if (!web3 || !web3.utils.isAddress(tokenAddress)) return;
         return new web3.eth.Contract(abi, tokenAddress, defaultParams);
     };
+    
 
     // SMART CONTRACT FACTORY
 
@@ -81,9 +90,11 @@ const BlockchainProvider = ({ children }) => {
         balance,
         connected,
         canConnect,
+        provider,
         connect,
         disconnect,
-        getContract
+        getContract,
+        isValidAddress
     };
 
     return <BlockchainContext.Provider value={blockchain}>{children}</BlockchainContext.Provider>;
