@@ -23,6 +23,7 @@ export default function App() {
                 <Route path='/graphql' element={<GraphQLTest />}>
                     <Route path=':id' element={<CharacterSummary />} />
                 </Route>
+                <Route path="/flashloan" />
             </Routes>
         </Container>
     );

@@ -55,6 +55,12 @@ const Sidebar = ({ show, toggle }) => {
                         <StyledAiOutlineLineChart />
                     </StyledLink>
                 </LinkItem>
+                <LinkItem active={active} key='/flashloan' path='/grapflashloanhql'>
+                    <StyledLink to='flashloan'>
+                        <Label>Flash Loan</Label>
+                        <StyledAiOutlineLineChart />
+                    </StyledLink>
+                </LinkItem>
                 <LinkItem active={active} key='/graphql' path='/graphql'>
                     <StyledLink to='graphql'>
                         <Label>Graphql Test</Label>
