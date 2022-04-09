@@ -1,16 +1,37 @@
 import styled from 'styled-components';
 import { RiSettings4Fill } from 'react-icons/ri';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { useState } from 'react';
+import Setting from './Setting';
+import { Modal } from '@mui/material';
 
-const Header = ({ toggle, sidebarVisible }) => {
+const Header = ({ toggle, sidebarVisible, onSettingClick }) => {
+    const [showSetting, setShowSetting] = useState(false);
+
+    const handleSetting = () => {
+        setShowSetting(true);
+    };
+
+    const handleCloseSetting = () => {
+        setShowSetting(false);
+    };
 
     return (
         <Container>
-            <StyledGiHamburgerMenu onClick={() => toggle(true)} visible={sidebarVisible ? undefined : "1"}/>
+            <StyledGiHamburgerMenu onClick={() => toggle(true)} visible={sidebarVisible ? undefined : '1'} />
             <MainOptionsContainer>
                 <ConnectWalletButton>Connect wallet</ConnectWalletButton>
-                <StyledRiSettings4Fill />
+                <StyledRiSettings4Fill onClick={handleSetting} />
             </MainOptionsContainer>
+
+            <Modal
+                open={showSetting}
+                onClose={handleCloseSetting}
+                aria-labelledby='modal-modal-title'
+                aria-describedby='modal-modal-description'
+                sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Setting onFinish={setShowSetting}/>
+            </Modal>
         </Container>
     );
 };
@@ -67,13 +88,13 @@ const MainOptionsContainer = styled.div`
 `;
 
 const StyledGiHamburgerMenu = styled(GiHamburgerMenu)`
-    visibility: ${({visible}) => visible == "1" ? 'visible' : 'hidden'};
+    visibility: ${({ visible }) => (visible == '1' ? 'visible' : 'hidden')};
     cursor: pointer;
     color: gray;
     font-size: 1.8rem;
 
     &:hover {
-       color: hsl(194, 81%, 50%);
+        color: hsl(194, 81%, 50%);
     }
 `;
 

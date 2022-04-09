@@ -4,9 +4,15 @@ import { AiOutlineSwap } from 'react-icons/ai';
 import useUniswap from '../components/hooks/useUniswap';
 import { useEffect, useState } from 'react';
 import useToken, { TOKEN_ACTIONS } from '../components/hooks/useToken';
+import { Modal } from 'react-bootstrap';
+import Setting from '../components/Setting';
+import useBlockchain from '../components/hooks/useBlockchain';
+import { ethers } from 'ethers';
 
 const Swap = () => {
-    const { hasAllowance, approveToSpend } = useUniswap();
+    const { hasAllowance, approveToSpend, getAmountOutMinUnformattedInput, getUniswapContractWithSigner, swap } =
+        useUniswap();
+    const { provider, getWeb3Provider } = useBlockchain();
     const [sendToken, sendTokenDispatcher] = useToken();
     const [getToken, getTokenDispatcher] = useToken();
     const [prioritizeGetAmount, setPrioritizeGetAmount] = useState(true);
@@ -19,10 +25,38 @@ const Swap = () => {
         getTokenDispatcher({ type: TOKEN_ACTIONS.UPDATE_TOKEN, payload: { data: temp } });
     };
 
-    const handleSwap = e => {
+    const handleSwap = async e => {
         e.preventDefault();
         if (canSpend) {
             // swap tokens
+            console.log({
+                send: sendToken.contract,
+                get: getToken.contract,
+                amount: sendToken.amount,
+                slippage: JSON.parse(localStorage.getItem('slippageTolerance')),
+                gasFee: JSON.parse(localStorage.getItem('gasFee')),
+            });
+
+            const wallet = ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC).connect(getWeb3Provider());
+            const slippage = JSON.parse(localStorage.getItem('slippageTolerance'));
+            const tradeData = await getAmountOutMinUnformattedInput(
+                wallet,
+                sendToken.amount,
+                sendToken.contract,
+                getToken.contract,
+                slippage
+            );
+
+            // amountIn, amountOutMin, tokenIn, tokenOut
+
+            const tx = await swap(
+                tradeData.data.amountIn,
+                tradeData.data.amountOutMin,
+                sendToken.contract,
+                getToken.contract
+            );
+
+            console.log({ tx });
         } else {
             setApproving(true);
         }
@@ -98,8 +132,7 @@ const Swap = () => {
                             ((parseFloat(sendToken.amount) <= 0 || sendToken.amount === '') && canSpend) ||
                             approving
                         }
-                        onClick={handleSwap}
-                    >
+                        onClick={handleSwap}>
                         {approving
                             ? 'Approving'
                             : sendToken.contract && getToken.contract

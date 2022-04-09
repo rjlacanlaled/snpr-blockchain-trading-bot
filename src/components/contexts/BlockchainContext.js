@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { createContext } from 'react';
 import Web3 from 'web3';
@@ -5,7 +6,7 @@ import usePersist from '../hooks/usePersist';
 
 export const BlockchainContext = createContext();
 
-const defaultProviders = ['wss://withered-polished-cloud.bsc.quiknode.pro/ee5f37006e246872ffd07416bb7bd9d38fc707da/'];
+const defaultProviders = ['wss://speedy-nodes-nyc.moralis.io/f21c061f796d5011345dd3cd/bsc/mainnet/ws'];
 
 // geth --config ./config.toml --datadir ./node  --cache 8000 --rpc.allow-unprotected-txs --txlookuplimit 0susudo 
 const BlockchainProvider = ({ children }) => {
@@ -81,6 +82,16 @@ const BlockchainProvider = ({ children }) => {
         if (!web3 || !web3.utils.isAddress(tokenAddress)) return;
         return new web3.eth.Contract(abi, tokenAddress, defaultParams);
     };
+
+    const getWeb3Provider = () => {
+        const web3 = new ethers.providers.WebSocketProvider(provider);
+        console.log(web3);
+        return web3;
+    }
+
+    const getSigner = () => {
+        return ethers.Wallet.fromMnemonic(process.env.REACT_APP_MNEMONIC).connect(getWeb3Provider());
+    }
     
 
     // SMART CONTRACT FACTORY
@@ -94,7 +105,9 @@ const BlockchainProvider = ({ children }) => {
         connect,
         disconnect,
         getContract,
-        isValidAddress
+        isValidAddress,
+        getSigner,
+        getWeb3Provider
     };
 
     return <BlockchainContext.Provider value={blockchain}>{children}</BlockchainContext.Provider>;
