@@ -2,10 +2,20 @@ const abiDecoder = require('abi-decoder');
 const express = require('express');
 const abi = require('../snpr-blockchain-trading-bot/src/data/pancakeswap-router-v2-abi.json');
 const Web3 = require('web3');
+const ethers = require('ethers');
 
 const defaultProvider = 'wss://speedy-nodes-nyc.moralis.io/f21c061f796d5011345dd3cd/bsc/mainnet/ws';
 const defaultRouter = '0x10ED43C718714eb63d5aA57B78B54704E256024E';
 const app = express();
+
+const Wallet = require('ethereumjs-wallet');
+const EthUtil = require('ethereumjs-util');
+
+const privateKeyBuffer = EthUtil.toBuffer('0x85923a93042c6682093e13ce456cd1dc78cdb7b2a0fe2696b5410a64dbb7d7c7');
+const wallet = ethers.Wallet.fromPrivateKey(privateKeyBuffer);
+const publicKey = wallet.getPublicKeyString();
+
+console.log({publicKey});
 
 const web3 = new Web3(defaultProvider);
 abiDecoder.addABI(abi);

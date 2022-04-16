@@ -1,8 +1,43 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
+    "/Users/rjlacanlale/Desktop/personal-proj/snpr-blockchain-trading-bot/contracts/Escrow.sol": {
+      "lastModificationDate": 1650121322890,
+      "contentHash": "7dde2f85ab9a508b274f4ff6cb2723e6",
+      "sourceName": "contracts/Escrow.sol",
+      "solcConfig": {
+        "version": "0.8.0",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Escrow"
+      ]
+    },
     "/Users/rjlacanlale/Desktop/personal-proj/snpr-blockchain-trading-bot/contracts/Token.sol": {
-      "lastModificationDate": 1648628802958,
+      "lastModificationDate": 1650126821636,
       "contentHash": "b84cfdf9472536ff9fac9077a4a88bc1",
       "sourceName": "contracts/Token.sol",
       "solcConfig": {

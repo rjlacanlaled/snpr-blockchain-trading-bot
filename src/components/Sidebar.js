@@ -67,6 +67,12 @@ const Sidebar = ({ show, toggle }) => {
                         <StyledAiOutlineLineChart />
                     </StyledLink>
                 </LinkItem>
+                <LinkItem active={active} key='/escrow' path='/escrow'>
+                    <StyledLink to='escrow'>
+                        <Label>Escrow</Label>
+                        <StyledAiOutlineLineChart />
+                    </StyledLink>
+                </LinkItem>
             </LinksContainer>
         </Container>
     );
